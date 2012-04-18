@@ -1,20 +1,21 @@
 import urllib2
 import json
 
-class __ServerUpdate:
+serverUrl = ""
+
+class ServerUpdate():
   def __init__(self, id):
     self.serverUpdate = {'id': id, 'orders': []}
   def addOrder(self, shipId, actionName, actionArgs):
     self.serverUpdate['orders'].append({'shipName': shipId, 'action': actionName, 'actArgs': actionArgs})
-     
-  def send(self):
+  def send(self): #fix by making a post request
     jsonUpdate = json.dumps(self.serverUpdate)
     response = urllib2.urlopen(updateUrl)
     return json.loads(response.read())
   def reset(self):
     self.serverUpdate['orders'] = []
 
-class __GameState:
+class GameState:
   def __init__(self, gameStateJson):
     self.playerShips = gameStateJson['playerShips']
     self.board = gameStateJson['board']
@@ -24,61 +25,60 @@ class Fleet:
   def __init__(self, names):
     response = urllib2.urlopen(serverUrl)
     infoJson = json.loads(response.read())
+    #infoJson = j
     self.playerId = infoJson['id']
-    self.state = __GameState(infoJson['gameState'])
+    self.state = GameState(infoJson['gameState'])
     self.ships = {}
-    self.__shipNames = {}
+    self.shipNames = {}
     i = 0
     for shipJson in self.state.playerShips: #infoJson['ships'] is a list of dictionaries
       buildShip = globals()[shipJson['type']]
       self.ships[names[i]] = buildShip(shipJson, names[i])
+      self.shipNames[shipJson['shipId']] = names[i]
       i = i + 1
-    self.__updatetoServer = __ServerUpdate(self.playerID)
+    self.updatetoServer = ServerUpdate(self.playerId)
 
   def updateShipStats():
     for shipJson in self.state.playerShips:
-      self.ships[self.__shipNames[shipJson['id']]].update(shipJson)
+      self.ships[self.shipNames[shipJson['id']]].update(shipJson)
 
-  def __modifyUpdateObject(self, shipId, actionName, actionArgs):
-    self.__updatetoServer['orders'].addOrder(shipId, actionName, actionArgs)
+  def modifyUpdateObject(self, shipId, actionName, actionArgs):
+    self.updatetoServer['orders'].addOrder(shipId, actionName, actionArgs)
 
   def executeOrders(self):
-    gameState = self.__updatetoServer.send()
-    self.state = __GameState(gameState)
+    gameState = self.updatetoServer.send()
+    self.state = GameState(gameState)
     self.updateShipStats()
-    self.__updatetoServer.reset()
+    self.updatetoServer.reset()
   
-  def getInfo():
+  def getInfo(self):
     return self.state
 
-  def getShip(shipName):
-    return self.playerShips['shipName']
+  def getShip(self,shipName):
+    return self.ships[shipName]
 
 
 
 class Ship(Fleet):
-  def __init__(self, shipJson, name, health = 10):  
-    Fleet.__shipNames[id] = name
+  def __init__(self,shipJson, name):  
     self.name = name
-    self.id = shipJson['id']
-    self.health = health
+    for key in shipJson:
+      print key
+      self.__dict__[key] = shipJson[key]
 
   def move(self, distance):
-    Fleet.__modifyUpdateObject(self.id, 'move', {'distance': distance})
+    Fleet.modifyUpdateObject(self.id, 'move', {'distance': distance})
 
   def turn(self, relativeTurn):
-    Fleet.__modifyUpdateObject(self.id, 'turn', {'direction': relativeTurn})
+    Fleet.modifyUpdateObject(self.id, 'turn', {'direction': relativeTurn})
 
   def shoot(self):
-    Fleet.__modifyUpdateObject(self.id, 'shoot') 
+    Fleet.modifyUpdateObject(self.id, 'shoot') 
 
-  def __update(self, shipJson):
-    self.health = health #don't bother trying to cheat, it's only important serverside anyways.
+  def update(self, shipJson):
+    self.__dict__[key] = shipJson[key]
 
-def endTurn():
-  pass
-
-def __modifyUpdateObject(shipName, actionName, actionArgs ):
-  pass
+  def getFeature(self, featureName):
+    return self.__dict__(featureName)
 
 
