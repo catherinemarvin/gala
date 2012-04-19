@@ -1,5 +1,6 @@
 var express = require('express');
 var nowjs = require('now');
+var logic = require('./gameLogic');
 
 var server = express.createServer();
 
@@ -323,6 +324,9 @@ var initialize = function () {
 }
 
 initialize();
+//console.log("testing module :)");
+//fyi: the new keyword is very important :)
+//var foo = new logic.Ship(5,5,5,"up");
 
 server.listen(80);
 console.log("Express server started")
