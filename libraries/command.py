@@ -11,8 +11,8 @@ class ServerUpdate():
   def addOrder(self, shipId, actionName, actionArgs):
     self.serverUpdate['orders'].append({'shipName': shipId, 'action': actionName, 'actArgs': actionArgs})
   def send(self): #fix by making a post request
-    data = urllib.urlencode(self.serverUpdate)
-    req = urllib2.Request(url, data)
+    toPost = urllib.urlencode(self.serverUpdate)
+    req = urllib2.Request(url, toPost)
     response = urllib2.urlopen(req)
     return json.loads(response.read())
   def reset(self):
