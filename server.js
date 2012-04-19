@@ -21,6 +21,10 @@ server.get('/', function (req, res) {
 	res.render("index");
 });
 
+server.get('/spectate', function (req, res) {
+	res.render("spectate");
+});
+
 server.post('/test', function (req, res) {
 	console.log("POSTED TO TEST");
 	res.send(req.body);
