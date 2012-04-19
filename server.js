@@ -68,23 +68,25 @@ server.post('/start', function (req, res) {
 server.post('/order', function (req, res) {
 	console.log('receiving orders');
 	var orders = req.body;
-	console.log(orders)
+	orders.orders = JSON.parse(orders.orders)
 	var player = orders.id
-	if (player == players.playerLeft && leftOrderQueue.length == 0) {
+	if (player === players.playerLeft && leftOrderQueue.length == 0) {
 		console.log("left player's orders received");
-		console.log(orders);
 		leftOrderQueue.push(orders);
-		res.send('ok');
+		//res.send('ok');
 
-	} else if (player == players.playerRight && rightOrderQueue.length == 0) {
+	} else if (player === players.playerRight && rightOrderQueue.length == 0) {
 		console.log("right player's orders received");
-		console.log(orders);
+		//console.log(orders);
 		rightOrderQueue.push(orders)
-		res.send('ok');
+		//res.send('ok');
 	} else {
 		console.log("already got too many orders");
-		res.send('not ok');
+		//res.send('not ok');
 	}
+
+	update(player,res)
+	
 });
 
 server.post("/getBoardState", function (req, res) {
@@ -93,6 +95,7 @@ server.post("/getBoardState", function (req, res) {
 });
 
 //temporary holder function. updates the board whenever it is called. to be replaced with an event loop
+/*
 server.post("/update", function (req, res) {
 	console.log('in update')
 	if (leftOrderQueue.length != 0 && rightOrderQueue.length != 0) {
@@ -100,18 +103,74 @@ server.post("/update", function (req, res) {
 		var leftOrders = leftOrderQueue.shift();
 		var rightOrders = rightOrderQueue.shift();
 		executeOrders(leftOrders, rightOrders);
+		console.log("done calling executeOrders");
 		res.send(board)
 	} else {
 		console.log("!!!!!!!!!!!!!!!!!!!!!!");
 	}
 });
+*/
+
+var t = null
+
+var responseStreams = {
+	"playerLeft" : null,
+	"playerRight" : null
+}
+
+var update = function (player, res) {
+	console.log("called update");
+	responseStreams[player] = res;
+
+	if (leftOrderQueue.length != 0 && rightOrderQueue.length != 0) {
+		console.log("updating!");
+		clearTimeout(t);
+		console.log(leftOrderQueue);
+		console.log(rightOrderQueue);
+		var leftOrders = leftOrderQueue.shift();
+		var rightOrders = rightOrderQueue.shift();
+		console.log("orders should be empty now");
+		console.log(leftOrderQueue);
+		console.log(rightOrderQueue);
+		executeOrders(leftOrders, rightOrders);
+		
+		var leftRet = {
+			id: 'playerLeft',
+			gameState: {
+				playerShips: playerLeftShips,
+				board: board,
+				visibleEnemyShips: playerRightShips
+			}
+		}
+		//console.log("~~~~~~~~~~");
+		//console.log(responseStreams)
+		responseStreams[players.playerLeft].send(leftRet);
+		console.log("sent left ret");
+		
+		var rightRet = {
+			id: 'playerRight',
+			gameState: {
+				playerShips: playerRightShips,
+				board: board,
+				visibleEnemyShips: playerLeftShips
+			}
+		}
+		responseStreams[players.playerRight].send(rightRet);
+		console.log("sent right ret")
+	} else {
+		console.log("don't have all the orders");
+		t = setTimeout(update,5000);
+	}
+}
 
 var executeOrders = function (leftOrders, rightOrders) {
 	console.log("executing orders")
+	console.log(leftOrders);
+	console.log(rightOrders);
 	var leftMovement = leftOrders.orders.filter(function (n) {return n.action == 'move'})
 	var rightMovement = rightOrders.orders.filter(function (n) {return n.action == 'move'})
-	console.log(leftMovement)
 	executeMovement(leftMovement, rightMovement);
+	console.log("executed executeMovement");
 	//executeFiring(leftOrders, rightOrders) <- will be done after moves works...
 }
 
@@ -186,7 +245,7 @@ var createShip = function (id, x, y, facing) {
 	var ret = {
 		shipId: id, 
 		position: {x: x, y: y}, 
-		type: 'ship',
+		type: 'Ship',
 		facing: facing,
 		lastPosition: null
 	}

@@ -8,4 +8,5 @@ Other than a type of apple, Gala is a way to learn programming while having fun.
 
 ##What are the requirements?
 nodejs
+
 nodejs modules: express nowjs ejs
