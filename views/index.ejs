@@ -27,7 +27,7 @@
 				console.log("ordering left");
 				var arg = {
 					id: 'playerLeft', 
-					orders : [{shipName: 0, action: "move", actArgs: {distance: 1}}, {shipName: 0, action: "move", actArgs: {distance: 1}}]
+					orders : [{shipName: 0, action: "move", actArgs: {distance: 1}}, {shipName: 1, action: "move", actArgs: {distance: 1}}]
 				}
 				$.post("/order", arg, function (data) {
 					console.log("left order callback");
@@ -41,12 +41,20 @@
 				console.log("ordering right");
 				var arg = {
 					id: 'playerRight', 
-					orders : [{shipName: 0, action: "move", actArgs: {distance: 1}}, {shipName: 0, action: "move", actArgs: {distance: 1}}]
+					orders : [{shipName: 0, action: "move", actArgs: {distance: 1}}, {shipName: 1, action: "move", actArgs: {distance: 1}}]
 				}
 				$.post("/order", arg, function (data) {
 					console.log("right order callback");
 					console.log(data);
 
+				})
+			}
+
+			var update = function () {
+				console.log('updating');
+				$.post("/update", function (data) {
+					console.log("update callback");
+					console.log(data);
 				})
 			}
 		</script>
@@ -58,5 +66,6 @@
 		<button onclick="join()">Join in the fun</button>
 		<button onclick="orderLeft()">Move Left player</button>
 		<button onclick="orderRight()">Move Right player</button>
+		<button onclick="update()">Update the board!</button>
 	</body>
 </html>
