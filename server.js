@@ -229,8 +229,14 @@ var moveShip = function (player, shipId, distance) {
 			var newX = newPos.x;
 			var newY = newPos.y;
 
-			console.log(newX);
-			console.log(newY);
+			if (newX < 0 || newX > maxX || newY < 0 || newY > maxY) {
+				ship.position = ship.lastPosition
+				newX = ship.position.x;
+				newY = ship.position.y;
+			}
+
+			console.log("X: "+ship.position.x);
+			console.log("Y: "+ship.position.y);
 
 			board[oldX][oldY] = createSpace(oldX,oldY);
 			board[newX][newY] = createShip(shipId,newX,newY,ship.facing);
@@ -269,6 +275,8 @@ var createSpace = function (x,y) {
 var playerLeftShips = null;
 var playerRightShips = null;
 var board = null;
+var maxX = 9;
+var maxY = 9;
 
 var players = {
 	playerLeft: null,
@@ -282,12 +290,12 @@ var initialize = function () {
 
 	board = new Array(10);
 
-	for (var i = 0; i < 10; i++) {
-		board[i] = new Array(10);
+	for (var i = 0; i <= maxX; i++) {
+		board[i] = new Array(maxX+1);
 	}
 
-	for (var i = 0; i < 10; i++) {
-		for (var j = 0; j < 10; j++) {
+	for (var i = 0; i <= maxX; i++) {
+		for (var j = 0; j <= maxY; j++) {
 			board[i][j] = createSpace(i,j);
 		}
 	}
