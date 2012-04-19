@@ -16,9 +16,62 @@
 		<![endif]-->
 
 		<script>
+			var board = null;
+
+			var maxX = 9;
+			var maxY = 9;
+
 			$(document).ready(function () {
 				console.log("ready and waiting");
+
+
+				board = new Array(maxX+1);
+
+				for (var i = 0; i <= maxX; i++) {
+					board[i] = new Array(maxX+1);
+				}
+
+				for (var i = 0; i <= maxX; i++) {
+					for (var j = 0; j <= maxY; j++) {
+						board[i][j] = null;
+					}
+				}
+
+				initializeBoard();
 			});
+		</script>
+
+
+		<script>
+			var loadBoard = function () {
+				console.log("loading board...");
+				$.post("/getBoardState", function (data) {
+					console.log(data)
+				})
+			}
+
+			//NOTE: currently the board is increasing in x to the right and increasing in y down.
+			//this is the opposite of how the board is represented in server.js
+			//will fix this one day.
+
+			var initializeBoard = function () {
+
+				console.log("initializing board...");
+				for (var j = 0; j <= maxY; j++) {
+					var toAdd = "<tr>";
+					for (var i = 0; i <= maxX; i++) {
+						toAdd += "<td id='cell"+i+","+j+"'>hi</td>"
+					}
+					//console.log("row to add: "+toAdd);
+					$("#gameBoard").find("tbody").append(toAdd)
+
+				}
+			}
+
+			var drawBoard = function (newBoard) {
+				//updates the board! 
+				console.log("drawing new board");
+			}
 		</script>
 	</head>
 
@@ -40,6 +93,22 @@
 				<div class="row">
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="span12" id="gameBoardDiv">
+						<table class="table-bordered" id="gameBoard">
+							<tbody>
+							</tbody>
+						</table>
+						
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="span12">
+						<button onclick="loadBoard()">Load the board!</button>
 					</div>
 				</div>
 

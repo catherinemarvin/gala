@@ -96,6 +96,7 @@ server.post('/order', function (req, res) {
 server.post("/getBoardState", function (req, res) {
 	console.log("GETTING BOARD STATE");
 	console.log(board)
+	res.send(board)
 });
 
 //temporary holder function. updates the board whenever it is called. to be replaced with an event loop
@@ -292,7 +293,7 @@ var rightOrderQueue = [];
 
 var initialize = function () {
 
-	board = new Array(10);
+	board = new Array(maxX+1);
 
 	for (var i = 0; i <= maxX; i++) {
 		board[i] = new Array(maxX+1);
