@@ -1,7 +1,9 @@
 import urllib2
+import urllib
 import json
 
 serverUrl = ""
+updateUrl = ""
 
 class ServerUpdate():
   def __init__(self, id):
@@ -9,8 +11,9 @@ class ServerUpdate():
   def addOrder(self, shipId, actionName, actionArgs):
     self.serverUpdate['orders'].append({'shipName': shipId, 'action': actionName, 'actArgs': actionArgs})
   def send(self): #fix by making a post request
-    jsonUpdate = json.dumps(self.serverUpdate)
-    response = urllib2.urlopen(updateUrl)
+    data = urllib.urlencode(self.serverUpdate)
+    req = urllib2.Request(url, data)
+    response = urllib2.urlopen(req)
     return json.loads(response.read())
   def reset(self):
     self.serverUpdate['orders'] = []
