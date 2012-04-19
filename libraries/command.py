@@ -40,16 +40,18 @@ class Fleet:
     self.ships = {}
     self.shipNames = {}
     i = 0
-    for shipJson in self.state.playerShips: #infoJson['ships'] is a list of dictionaries
-      buildShip = globals()[shipJson['type']]
-      self.ships[names[i]] = buildShip(shipJson, names[i], self)
-      self.shipNames[shipJson['shipId']] = names[i]
+    for key in self.state.playerShips: #infoJson['ships'] is a dictionary of dictionaries
+      ship = self.state.playerShips[key] 
+      buildShip = globals()[ ship['type'] ]
+      self.ships[names[i]] = buildShip(ship, names[i], self)
+      self.shipNames[ship['shipId']] = names[i]
       i = i + 1
     self.updatetoServer = ServerUpdate(self.playerId)
 
   def updateShipStats(self):
-    for shipJson in self.state.playerShips:
-      self.ships[self.shipNames[shipJson['shipId']]].update(shipJson)
+    for key in self.state.playerShips:
+      ship = self.state.playerShips[key]
+      self.ships[self.shipNames[ship['shipId']]].update(ship)
 
   def modifyUpdateObject(self, shipId, actionName, actionArgs):
     self.updatetoServer.addOrder(shipId, actionName, actionArgs)

@@ -48,6 +48,8 @@ server.post('/start', function (req, res) {
 				visibleEnemyShips: playerRightShips
 			}
 		}
+		//console.log("SENDING");
+		//console.log(ret)
 		res.send(ret)
 
 	} else if (players.playerRight == null) {
@@ -100,23 +102,9 @@ server.post("/getBoardState", function (req, res) {
 	res.send(board)
 });
 
-//temporary holder function. updates the board whenever it is called. to be replaced with an event loop
-/*
-server.post("/update", function (req, res) {
-	console.log('in update')
-	if (leftOrderQueue.length != 0 && rightOrderQueue.length != 0) {
-		console.log("updating");
-		var leftOrders = leftOrderQueue.shift();
-		var rightOrders = rightOrderQueue.shift();
-		executeOrders(leftOrders, rightOrders);
-		console.log("done calling executeOrders");
-		res.send(board)
-	} else {
-		console.log("!!!!!!!!!!!!!!!!!!!!!!");
-	}
-});
-*/
-
+//LONG POLLING.
+//TODO: add timer so if you write bad code that loops forever, the game continues.
+//Related: make game tick every second or so so the game is actually watchable.
 var t = null
 
 var responseStreams = {
@@ -131,13 +119,13 @@ var update = function (player, res) {
 	if (leftOrderQueue.length != 0 && rightOrderQueue.length != 0) {
 		console.log("updating!");
 		clearTimeout(t);
-		console.log(leftOrderQueue);
-		console.log(rightOrderQueue);
+		//console.log(leftOrderQueue);
+		//console.log(rightOrderQueue);
 		var leftOrders = leftOrderQueue.shift();
 		var rightOrders = rightOrderQueue.shift();
-		console.log("orders should be empty now");
-		console.log(leftOrderQueue);
-		console.log(rightOrderQueue);
+		//console.log("orders should be empty now");
+		//console.log(leftOrderQueue);
+		//console.log(rightOrderQueue);
 		executeOrders(leftOrders, rightOrders);
 		
 		var leftRet = {
@@ -188,17 +176,46 @@ var executeMovement = function (leftOrders, rightOrders) {
 		var order = leftOrders[i];
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
-		moveShip(players.playerLeft, shipId, dist);
+		playerLeftShips[shipId].move(dist);
+		//moveShip(players.playerLeft, shipId, dist);
 	}
-	console.log('moved left player');
+
+
 	for (i in rightOrders) {
 		var order = leftOrders[i];
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
-		moveShip(players.playerRight, shipId, dist)
+		playerRightShips[shipId].move(dist);
+		//moveShip(players.playerRight, shipId, dist)
 	}
+
+	console.log("updating board");
+	//UPDATE BOARD HERE
+	for (i in playerLeftShips) {
+		var ship = playerLeftShips[i];
+		var newXPos = ship.position.x
+		var newYPos = ship.position.y
+		var oldXPos = ship.lastPosition.x
+		var oldYPos = ship.lastPosition.y
+		board[oldXPos][oldYPos] = new logic.Space(oldXPos,oldYPos);
+		board[newXPos][newYPos] = ship
+	}
+
+	for (i in playerRightShips) {
+		var ship = playerRightShips[i];
+		var newXPos = ship.position.x
+		var newYPos = ship.position.y
+		var oldXPos = ship.lastPosition.x
+		var oldYPos = ship.lastPosition.y
+		board[oldXPos][oldYPos] = new logic.Space(oldXPos,oldYPos);
+		board[newXPos][newYPos] = ship
+	}
+
+
 	console.log('done moving all players');
 }
+
+/*
 
 var moveShip = function (player, shipId, distance) {
 	var playerShips = null;
@@ -252,6 +269,7 @@ var moveShip = function (player, shipId, distance) {
 		}
 	}
 }
+*/
 
 var createShip = function (id, x, y, facing) {
 	var ret = {
@@ -271,7 +289,7 @@ var createSpace = function (x,y) {
 			x: x,
 			y: y
 		},
-		type: "space"
+		type: "Space"
 	}
 	return ret
 }
@@ -302,19 +320,20 @@ var initialize = function () {
 
 	for (var i = 0; i <= maxX; i++) {
 		for (var j = 0; j <= maxY; j++) {
-			board[i][j] = createSpace(i,j);
+			board[i][j] = new logic.Space(i,j);
 		}
 	}
 
-	var leftShip1 = createShip(0,0,0, 'right');
-	var leftShip2 = createShip(1,0,1, 'right');
+	var leftShip1 = new logic.Ship(0,0,0, 'right');
+	var leftShip2 = new logic.Ship(1,0,1, 'right');
 
-	playerLeftShips = [leftShip1, leftShip2];
+	//actually JSON with IDs.
+	playerLeftShips = {0: leftShip1, 1: leftShip2};
 
-	var rightShip1 = createShip(0,9,9, 'left');
-	var rightShip2 = createShip(1,9,8, 'left');
+	var rightShip1 = new logic.Ship(0,9,9, 'left');
+	var rightShip2 = new logic.Ship(1,9,8, 'left');
 
-	playerRightShips = [rightShip1, rightShip2];
+	playerRightShips = {0: rightShip1, 1: rightShip2};
 
 	board[0][0] = leftShip1;
 	board[0][1] = leftShip2;
@@ -323,7 +342,10 @@ var initialize = function () {
 	board[9][8] = rightShip2;
 }
 
+console.log("pre-initialize");
 initialize();
+console.log("initialized");
+//console.log(playerLeftShips)
 //console.log("testing module :)");
 //fyi: the new keyword is very important :)
 //var foo = new logic.Ship(5,5,5,"up");
