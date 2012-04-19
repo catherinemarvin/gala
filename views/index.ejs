@@ -1,9 +1,71 @@
 <html>
 	<head>
 		<title>Test Splash Page</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script>
+			$(document).ready(function () {
+				console.log("ready and waiting");
+			});
+
+			var getBoardState = function () {
+				console.log("Grabbing board state");
+				$.post("/getBoardState", function (data) {
+					console.log("in callback");
+					console.log(data);
+				})
+			}
+
+			var join = function () {
+				console.log("Calling /start");
+				$.post("/start", function (data) {
+					console.log("in callback");
+					console.log(data)
+				})
+			}
+
+			var orderLeft = function () {
+				console.log("ordering left");
+				var arg = {
+					id: 'playerLeft', 
+					orders : [{shipName: 0, action: "move", actArgs: {distance: 1}}, {shipName: 1, action: "move", actArgs: {distance: 1}}]
+				}
+				$.post("/order", arg, function (data) {
+					console.log("left order callback");
+					console.log(data);
+
+				})
+			}
+
+
+			var orderRight = function () {
+				console.log("ordering right");
+				var arg = {
+					id: 'playerRight', 
+					orders : [{shipName: 0, action: "move", actArgs: {distance: 1}}, {shipName: 1, action: "move", actArgs: {distance: 1}}]
+				}
+				$.post("/order", arg, function (data) {
+					console.log("right order callback");
+					console.log(data);
+
+				})
+			}
+
+			var update = function () {
+				console.log('updating');
+				$.post("/update", function (data) {
+					console.log("update callback");
+					console.log(data);
+				})
+			}
+		</script>
 	</head>
 
 	<body>
 		Hello!
+		<button onclick="getBoardState()">Get Board State</button>
+		<button onclick="join()">Join in the fun</button>
+		<button onclick="orderLeft()">Move Left player</button>
+		<button onclick="orderRight()">Move Right player</button>
+		<button onclick="update()">Update the board!</button>
 	</body>
 </html>
