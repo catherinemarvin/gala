@@ -172,26 +172,26 @@ var executeOrders = function (leftOrders, rightOrders) {
 	console.log("executing orders")
 	console.log(leftOrders);
 	console.log(rightOrders);
-        if ( leftOrders == undefined){
-          leftOrders = []
-        }
-        if (rightOrders == undefined){
-          rightOrders = []
-        }
-        var allShipStartPos = {}
-        for (i in playerLeftShips){
-          var ship = playerLeftShips[i]
-          console.log('!!!!!!!!!!!!!!!!!!!!')
-          console.log(ship)
-          console.log(ship['shipId'])
-          allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y}
-        }
-        for (i in playerRightShips){
-          var ship = playerLeftShips[i]
-          allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y}
-        }
+    if ( leftOrders == undefined){
+      leftOrders = []
+    }
+    if (rightOrders == undefined){
+      rightOrders = []
+    }
+    var allShipStartPos = {}
+    for (i in playerLeftShips){
+      var ship = playerLeftShips[i]
+      console.log('!!!!!!!!!!!!!!!!!!!!')
+      console.log(ship)
+      console.log(ship['shipId'])
+      allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y}
+    }
+    for (i in playerRightShips){
+      var ship = playerLeftShips[i]
+      allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y}
+    }
 
-        var allDest = {}
+    var allDest = {}
 	var leftMovement = leftOrders.orders.filter(function (n) {return n.action == 'move'})
 	var rightMovement = rightOrders.orders.filter(function (n) {return n.action == 'move'})
 	executeMovement(leftMovement, rightMovement, allDest, allShipStartPos);

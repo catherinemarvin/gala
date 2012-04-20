@@ -49,6 +49,10 @@
 			//raphael's grid system goes: x: 0 -> 9 and y: 9 -> 0 (i.e. y increases from top to bottom)
 			//todo: fix it :3
 
+			var t = null;
+
+			var allShips = [];
+
 
 			var initializeBoard = function () {
 				paper = Raphael("gameBoardDiv",500,500);
@@ -64,6 +68,7 @@
 			var loadOpeningBoard = function () {
 				$.post("/getBoardState", function (data) {
 					drawFirstBoard(data);
+					t = setTimeout(drawNextTick,10000);
 				});
 			}
 
@@ -77,13 +82,51 @@
 							var xPos = boardObj.position.x;
 							var yPos = boardObj.position.y;
 							var newShip = paper.rect(xPos*50,yPos*50,50,50);
+							console.log("SHIP!!!");
+							console.log(boardObj);
+							newShip.node.id = "ship"+boardObj.shipId;
+							$(newShip.node).attr("class",boardObj.playerId)
+							//newShip.node.class = boardObj.playerId;
 							newShip.attr({fill:"red"});
 						} else {
 							alert('wat');
 						}
 					}
 				}
+			}
 
+			var loadMovements = function (newBoard) {
+				for (var i = 0; i <= maxX; i++) {
+					for (var j = 0; j <= maxY; j++) {
+						var boardObj = newBoard[i][j];
+						if (boardObj.type == "Space") {
+							//do nothing
+						} else if (boardObj.type == "Ship") {
+							allShips.push(boardObj);
+						} else {
+							alert('wat');
+						}
+					}
+				}
+			}
+
+			var drawNextTick = function () {
+				$.post("/getBoardState", function (data) {
+					loadMovements(data);
+					t = setTimeout(drawNextTick,10000);
+				});
+			}
+
+			var updateMovements = function (board) {
+				console.log("updating movements");
+				while (allShips.length != 0) {
+					var ship = allShips.shift();
+					var oldX = ship.lastPosition.x;
+					var oldY = ship.lastPosition.y;
+					var newX = ship.position.x;
+					var newY = ship.position.y;
+					
+				}
 			}
 
 			/*
