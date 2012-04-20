@@ -26,6 +26,10 @@ server.get('/spectate', function (req, res) {
 	res.render("spectate");
 });
 
+server.get('/raphael', function (req, res) {
+	res.render('raphael');
+})
+
 server.post('/test', function (req, res) {
 	console.log("POSTED TO TEST");
 	res.send(req.body);

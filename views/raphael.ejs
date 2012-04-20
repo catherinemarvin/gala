@@ -3,13 +3,11 @@
 		<meta charset='utf-8'>
 		<meta name="description" content="Gala: Learn how to program by commanding a robot army in space!">
 		<meta name="author" content="Kevin Hwang & Ajay Tripathy">
-		<title>Spectating!</title>
+		<title>RAPHAEL TEST</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
-		<link href="/static/spectate.css" rel="stylesheet">
-
-		<script src="/static/jstween-1.1.min.js"></script>
+		<link href="/static/raphael.css" rel="stylesheet">
 
 		<!--HTML5 shim, for IE6-8 support of HTML5 elements. Does it actually work? No clue, but here's to hoping it does!-->
 
@@ -17,6 +15,7 @@
 			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 
+		<script src="/static/raphael-min.js"></script>
 		<script>
 			var board = null;
 
@@ -46,6 +45,13 @@
 
 		<script>
 			var t = null;
+			var initializeBoard = function () {
+				var paper = Raphael("gameBoardDiv",500,500);
+				var rect = paper.rect(10,10,50,50);
+				rect.attr({fill: "green"});
+			}
+
+			/*
 			var loadBoard = function () {
 				console.log("loading board...");
 				$.post("/getBoardState", function (data) {
@@ -95,6 +101,7 @@
 				}
 
 			}
+			*/
 		</script>
 	</head>
 
@@ -108,7 +115,7 @@
 		</div>
 		<div id="content">
 			<div class="hero">
-				<h1>Spectate mode</h1>
+				<h1>RAPHAEL!!!</h1>
 			</div>
 			<div class="container">
 
@@ -121,11 +128,6 @@
 
 				<div class="row">
 					<div class="span12" id="gameBoardDiv">
-						<table class="table table-bordered" id="gameBoard">
-							<tbody>
-							</tbody>
-						</table>
-						
 					</div>
 				</div>
 
