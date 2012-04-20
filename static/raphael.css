@@ -1,0 +1,31 @@
+body {
+	padding-top: 42px;
+	padding-bottom: 40px;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+a.brand:link {
+	color: #000000;
+}
+
+a.brand:visited {
+	color: #000000;
+}
+
+.hero {
+	background: #F0F0F0;
+	border-top: 3px solid #EBEBEB;
+	border-bottom: 1px solid #E1E1E1;
+	margin-bottom: 30px;
+	padding: 30px 0 31px;
+	text-align: center;
+}
+.navbar-inner {
+	background-color: #FFFFFF;
+	background-image: none;
+}
+
+#gameBoardDiv {
+	width: 500px;
+	height: 500px;
+}

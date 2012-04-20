@@ -3,13 +3,11 @@
 		<meta charset='utf-8'>
 		<meta name="description" content="Gala: Learn how to program by commanding a robot army in space!">
 		<meta name="author" content="Kevin Hwang & Ajay Tripathy">
-		<title>Spectating!</title>
+		<title>RAPHAEL TEST</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
-		<link href="/static/spectate.css" rel="stylesheet">
-
-		<script src="/static/jstween-1.1.min.js"></script>
+		<link href="/static/raphael.css" rel="stylesheet">
 
 		<!--HTML5 shim, for IE6-8 support of HTML5 elements. Does it actually work? No clue, but here's to hoping it does!-->
 
@@ -17,11 +15,15 @@
 			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 
+		<script src="/static/raphael-min.js"></script>
 		<script>
 			var board = null;
 
 			var maxX = 9;
 			var maxY = 9;
+
+			var t = null;
+			var paper = null;
 
 			$(document).ready(function () {
 				console.log("ready and waiting");
@@ -38,14 +40,53 @@
 						board[i][j] = null;
 					}
 				}
-
 				initializeBoard();
 			});
 		</script>
 
 
 		<script>
-			var t = null;
+			//raphael's grid system goes: x: 0 -> 9 and y: 9 -> 0 (i.e. y increases from top to bottom)
+			//todo: fix it :3
+
+
+			var initializeBoard = function () {
+				paper = Raphael("gameBoardDiv",500,500);
+				for (var i = 0; i <= maxX; i++) {
+					for (var j = 0; j <= maxY; j++) {
+						var rect = paper.rect(i*50,j*50,50,50);
+						rect.attr({fill: "green"});
+						rect.node.id="cell"+i+","+j
+					}
+				}
+			}
+
+			var loadOpeningBoard = function () {
+				$.post("/getBoardState", function (data) {
+					drawFirstBoard(data);
+				});
+			}
+
+			var drawFirstBoard = function (newBoard) {
+				for (var i = 0; i <= maxX; i++) {
+					for (var j = 0; j <= maxY; j++) {
+						var boardObj = newBoard[i][j];
+						if (boardObj.type == "Space") {
+							//do nothing
+						} else if (boardObj.type == "Ship") {
+							var xPos = boardObj.position.x;
+							var yPos = boardObj.position.y;
+							var newShip = paper.rect(xPos*50,yPos*50,50,50);
+							newShip.attr({fill:"red"});
+						} else {
+							alert('wat');
+						}
+					}
+				}
+
+			}
+
+			/*
 			var loadBoard = function () {
 				console.log("loading board...");
 				$.post("/getBoardState", function (data) {
@@ -74,8 +115,6 @@
 				}
 			}
 
-
-
 			var drawBoard = function (newBoard) {
 				//updates the board! 
 				console.log("drawing new board");
@@ -95,6 +134,7 @@
 				}
 
 			}
+			*/
 		</script>
 	</head>
 
@@ -108,7 +148,7 @@
 		</div>
 		<div id="content">
 			<div class="hero">
-				<h1>Spectate mode</h1>
+				<h1>RAPHAEL!!!</h1>
 			</div>
 			<div class="container">
 
@@ -116,16 +156,12 @@
 				<div class="row">
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
+						<button onclick="loadOpeningBoard()">LOAD FIRST BOARD</button>
 					</div>
 				</div>
 
 				<div class="row">
 					<div class="span12" id="gameBoardDiv">
-						<table class="table table-bordered" id="gameBoard">
-							<tbody>
-							</tbody>
-						</table>
-						
 					</div>
 				</div>
 
