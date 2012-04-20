@@ -77,7 +77,7 @@ server.post('/start', function (req, res) {
 		}
 		res.send(ret);
 		//start the timer for both players
-		t = setTimeout(update,10000)
+		t = setTimeout(update,1000)
 		
 	} else {
 		console.log("??????????");
@@ -114,8 +114,8 @@ server.post('/order', function (req, res) {
 });
 
 server.post("/getBoardState", function (req, res) {
-	console.log("GETTING BOARD STATE");
-	console.log(board)
+	//console.log("GETTING BOARD STATE");
+	//console.log(board)
 	res.send(board)
 });
 
@@ -181,14 +181,11 @@ var executeOrders = function (leftOrders, rightOrders) {
         var allShipStartPos = {}
         for (i in playerLeftShips){
           var ship = playerLeftShips[i]
-          console.log('!!!!!!!!!!!!!!!!!!!!')
-          console.log(ship)
-          console.log(ship['shipId'])
-          allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y}
+          allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y }
         }
         for (i in playerRightShips){
-          var ship = playerLeftShips[i]
-          allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y}
+          var ship = playerRightShips[i]
+          allShipStartPos[ship['shipId']] = {'shipId': ship['shipId'] , 'x' : ship.position.x , 'y': ship.position.y }
         }
 
         var allDest = {}
@@ -199,7 +196,6 @@ var executeOrders = function (leftOrders, rightOrders) {
 	//executeFiring(leftOrders, rightOrders) <- will be done after moves works...
 }
 
-//ignores collision for now, so don't let ships collide!
 var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPos) {
 	console.log('executing movement phase');
 	for (i in leftOrders) {
@@ -207,47 +203,63 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
                 var ship = playerLeftShips[shipId]
-		ship.move(dist);
-                var newXPos = ship.position.x
-                var newYPos = ship.position.y
-                var oldXPos = ship.lastPosition.x
-                var oldYPos = ship.lastPosition.y
-                board[oldXPos][oldYPos] = new logic.Space(oldXPos,oldYPos);
-                board[newXPos][newYPos] = ship
-               if ( allDest[ [newXPos , newYPos] ] == undefined){
-                  allDest[[newXPos, newYPos]] = [ship]
+                if (!(ship === undefined)){
+                  console.log('should only happen once') 
+		  ship.move(dist);
+                  var newXPos = ship.position.x
+                  var newYPos = ship.position.y
+                  var oldXPos = ship.lastPosition.x
+                  var oldYPos = ship.lastPosition.y
+                  board[oldXPos][oldYPos] = new logic.Space(oldXPos,oldYPos);
+                  board[newXPos][newYPos] = ship
+                  if ( allDest[ [newXPos , newYPos] ] == undefined){
+                     allDest[[newXPos, newYPos]] = [ship]
+                  }
+                  else{
+                    allDest[[newXPos, newYPos]].push(ship)
+                  }
+                  delete allShipStartPos[shipId]
                }
-               else{
-                 allDest[[newXPos, newYPos]].push(ship)
-               }
-               delete allShipStartPos[shipId]
 	}
 
 
 	for (i in rightOrders) {
-		var order = leftOrders[i];
+		var order = rightOrders[i];
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
 		var ship = playerRightShips[shipId]
-                ship.move(dist);
-                var newXPos = ship.position.x
-                var newYPos = ship.position.y
-                var oldXPos = ship.lastPosition.x
-                var oldYPos = ship.lastPosition.y
-                board[oldXPos][oldYPos] = new logic.Space(oldXPos,oldYPos);
-                board[newXPos][newYPos] = ship
-               if ( allDest[ [newXPos , newYPos] ] == undefined){
-                  allDest[[newXPos, newYPos]] = [ship]
+                if (!(ship === undefined)){
+                  console.log('happens alla time')
+                  ship.move(dist)
+                  var newXPos = ship.position.x
+                  var newYPos = ship.position.y
+                  var oldXPos = ship.lastPosition.x
+                  var oldYPos = ship.lastPosition.y
+                  board[oldXPos][oldYPos] = new logic.Space(oldXPos,oldYPos);
+                  board[newXPos][newYPos] = ship
+                  if ( allDest[ [newXPos , newYPos] ] == undefined){
+                     allDest[[newXPos, newYPos]] = [ship]
+                  }
+                  else{
+                     allDest[[newXPos, newYPos]].push(ship)
+                  }
+                  delete allShipStartPos[shipId]
                }
-               else{
-                  allDest[[newXPos, newYPos]].push(ship)
-               }
-               delete allShipStartPos[shipId]
-
 	}
+        console.log("ALLDEST BEFORE STATIONARY SHIPS")
+        console.log(allDest)
+        console.log("STATIONARY SHIPS")
+        console.log(allShipStartPos)
 
         for (i in allShipStartPos){
-          var shipId = allShipStartPos[i][shipId]
+          var shipId = allShipStartPos[i]['shipId']
+          var ship = null
+          if (!(playerLeftShips[shipId] == undefined)){
+             ship = playerLeftShips[shipId]
+          }
+          else{
+             ship = playerRightShips[shipId]
+          }
           var xPos = allShipStartPos[i]['x']
           var yPos = allShipStartPos[i]['y']
           if ( allDest[ [xPos , yPos] ] == undefined){
@@ -258,13 +270,23 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
           }
 
         }
-       
-        
+        console.log("HERES ALLDEST!!!!!!!!!!!!!!!!!!!!!")
+        console.log( allDest )
         for (i in allDest){
           if(allDest[i].length > 1){
             for (j in allDest[i]){
+              console.log('ship destroyed~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
               var ship = allDest[i][j]
-              ship.destroy(board)
+              console.log(ship)
+              if (ship.fleet === 'playerLeftShips'){
+                console.log('left ship should be destroyed???????????????????????????')
+                ship.destroy(board, playerLeftShips)
+              }
+              else if (ship.fleet === 'playerRightShips'){
+                console.log('right ship destroyed ???????????????????????????????????')
+                ship.destroy(board, playerRightShips)
+              }
+
             }
           }
         }
@@ -382,16 +404,16 @@ var initialize = function () {
 		}
 	}
 
-	var leftShip1 = new logic.Ship(0,0,0, 'right', 'playerLeft', playerLeftShips);
-	var leftShip2 = new logic.Ship(1,0,1, 'right', 'playerLeft', playerLeftShips);
+	var leftShip1 = new logic.Ship(0,0,0, 'right', 'playerLeft', "playerLeftShips");
+	var leftShip2 = new logic.Ship(1,1,0, 'left', 'playerLeft', "playerLeftShips");
 
 	//actually JSON with IDs.
 	playerLeftShips = {0: leftShip1, 1: leftShip2};
 
-	var rightShip1 = new logic.Ship(0,9,9, 'left', 'playerRight', playerRightShips);
-	var rightShip2 = new logic.Ship(1,9,8, 'left', 'playerRight', playerRightShips);
+	var rightShip1 = new logic.Ship(2,9,9, 'left', 'playerRight', "playerRightShips");
+	var rightShip2 = new logic.Ship(3,9,8, 'left', 'playerRight', "playerRightShips");
 
-	playerRightShips = {0: rightShip1, 1: rightShip2};
+	playerRightShips = {2: rightShip1, 3: rightShip2};
 
 	board[0][0] = leftShip1;
 	board[0][1] = leftShip2;
