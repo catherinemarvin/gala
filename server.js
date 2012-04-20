@@ -31,6 +31,13 @@ server.post('/test', function (req, res) {
 	res.send(req.body);
 });
 
+var responseStreams = {
+	"playerLeft" : null,
+	"playerRight" : null
+}
+
+var t = null
+
 //for now assume a 10x10 board and each player has two ships, with no fog-of-war
 //always assign left player first.
 
@@ -65,12 +72,16 @@ server.post('/start', function (req, res) {
 			}
 		}
 		res.send(ret);
+		//start the timer for both players
+		t = setTimeout(update,10000)
 		
 	} else {
 		console.log("??????????");
 	}
 
 });
+
+
 
 server.post('/order', function (req, res) {
 	console.log('receiving orders');
@@ -91,8 +102,10 @@ server.post('/order', function (req, res) {
 		console.log("already got too many orders");
 		//res.send('not ok');
 	}
+	responseStreams[player] = res;
 
-	update(player,res)
+	//update()
+	//update(player,res)
 	
 });
 
@@ -105,56 +118,50 @@ server.post("/getBoardState", function (req, res) {
 //LONG POLLING.
 //TODO: add timer so if you write bad code that loops forever, the game continues.
 //Related: make game tick every second or so so the game is actually watchable.
-var t = null
 
-var responseStreams = {
-	"playerLeft" : null,
-	"playerRight" : null
-}
-
-var update = function (player, res) {
+var update = function () {
 	console.log("called update");
-	responseStreams[player] = res;
 
 	if (leftOrderQueue.length != 0 && rightOrderQueue.length != 0) {
-		console.log("updating!");
-		clearTimeout(t);
-		//console.log(leftOrderQueue);
-		//console.log(rightOrderQueue);
-		var leftOrders = leftOrderQueue.shift();
-		var rightOrders = rightOrderQueue.shift();
-		//console.log("orders should be empty now");
-		//console.log(leftOrderQueue);
-		//console.log(rightOrderQueue);
-		executeOrders(leftOrders, rightOrders);
-		
-		var leftRet = {
-			id: 'playerLeft',
-			gameState: {
-				playerShips: playerLeftShips,
-				board: board,
-				visibleEnemyShips: playerRightShips
-			}
-		}
-		//console.log("~~~~~~~~~~");
-		//console.log(responseStreams)
-		responseStreams[players.playerLeft].send(leftRet);
-		console.log("sent left ret");
-		
-		var rightRet = {
-			id: 'playerRight',
-			gameState: {
-				playerShips: playerRightShips,
-				board: board,
-				visibleEnemyShips: playerLeftShips
-			}
-		}
-		responseStreams[players.playerRight].send(rightRet);
-		console.log("sent right ret")
+		console.log("got all the orders");
 	} else {
 		console.log("don't have all the orders");
-		t = setTimeout(update,5000);
 	}
+	console.log("updating!");
+	//clearTimeout(t);
+	//console.log(leftOrderQueue);
+	//console.log(rightOrderQueue);
+	var leftOrders = leftOrderQueue.shift();
+	var rightOrders = rightOrderQueue.shift();
+	//console.log("orders should be empty now");
+	//console.log(leftOrderQueue);
+	//console.log(rightOrderQueue);
+	executeOrders(leftOrders, rightOrders);
+	
+	var leftRet = {
+		id: 'playerLeft',
+		gameState: {
+			playerShips: playerLeftShips,
+			board: board,
+			visibleEnemyShips: playerRightShips
+		}
+	}
+	//console.log("~~~~~~~~~~");
+	//console.log(responseStreams)
+	responseStreams[players.playerLeft].send(leftRet);
+	console.log("sent left ret");
+	
+	var rightRet = {
+		id: 'playerRight',
+		gameState: {
+			playerShips: playerRightShips,
+			board: board,
+			visibleEnemyShips: playerLeftShips
+		}
+	}
+	responseStreams[players.playerRight].send(rightRet);
+	console.log("sent right ret")
+	t = setTimeout(update, 10000)
 }
 
 var executeOrders = function (leftOrders, rightOrders) {
