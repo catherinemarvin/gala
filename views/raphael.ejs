@@ -22,6 +22,9 @@
 			var maxX = 9;
 			var maxY = 9;
 
+			var t = null;
+			var paper = null;
+
 			$(document).ready(function () {
 				console.log("ready and waiting");
 
@@ -37,18 +40,50 @@
 						board[i][j] = null;
 					}
 				}
-
 				initializeBoard();
 			});
 		</script>
 
 
 		<script>
-			var t = null;
+			//raphael's grid system goes: x: 0 -> 9 and y: 9 -> 0 (i.e. y increases from top to bottom)
+			//todo: fix it :3
+
+
 			var initializeBoard = function () {
-				var paper = Raphael("gameBoardDiv",500,500);
-				var rect = paper.rect(10,10,50,50);
-				rect.attr({fill: "green"});
+				paper = Raphael("gameBoardDiv",500,500);
+				for (var i = 0; i <= maxX; i++) {
+					for (var j = 0; j <= maxY; j++) {
+						var rect = paper.rect(i*50,j*50,50,50);
+						rect.attr({fill: "green"});
+						rect.node.id="cell"+i+","+j
+					}
+				}
+			}
+
+			var loadOpeningBoard = function () {
+				$.post("/getBoardState", function (data) {
+					drawFirstBoard(data);
+				});
+			}
+
+			var drawFirstBoard = function (newBoard) {
+				for (var i = 0; i <= maxX; i++) {
+					for (var j = 0; j <= maxY; j++) {
+						var boardObj = newBoard[i][j];
+						if (boardObj.type == "Space") {
+							//do nothing
+						} else if (boardObj.type == "Ship") {
+							var xPos = boardObj.position.x;
+							var yPos = boardObj.position.y;
+							var newShip = paper.rect(xPos*50,yPos*50,50,50);
+							newShip.attr({fill:"red"});
+						} else {
+							alert('wat');
+						}
+					}
+				}
+
 			}
 
 			/*
@@ -79,8 +114,6 @@
 					$("#gameBoard").find("tbody").append(toAdd)
 				}
 			}
-
-
 
 			var drawBoard = function (newBoard) {
 				//updates the board! 
@@ -123,6 +156,7 @@
 				<div class="row">
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
+						<button onclick="loadOpeningBoard()">LOAD FIRST BOARD</button>
 					</div>
 				</div>
 
