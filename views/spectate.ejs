@@ -46,7 +46,8 @@
 			var loadBoard = function () {
 				console.log("loading board...");
 				$.post("/getBoardState", function (data) {
-					console.log(data)
+					console.log("got board state. time to draw!");
+					drawBoard(data)
 				})
 			}
 
@@ -57,7 +58,7 @@
 			var initializeBoard = function () {
 
 				console.log("initializing board...");
-				for (var j = 0; j <= maxY; j++) {
+				for (var j = maxY; j >= 0; j--) {
 					var toAdd = "<tr>";
 					for (var i = 0; i <= maxX; i++) {
 						toAdd += "<td id='cell"+i+","+j+"'>hi</td>"
@@ -71,6 +72,21 @@
 			var drawBoard = function (newBoard) {
 				//updates the board! 
 				console.log("drawing new board");
+				console.log(newBoard);
+				for (var i = 0; i <= maxX; i++) {
+					for (var j = 0; j <= maxY; j++) {
+						var cell = document.getElementById("cell"+i+","+j)
+						var boardObj = newBoard[i][j];
+						if (boardObj.type == "Space") {
+							cell.innerText = "SPACE";
+						} else if (boardObj.type == "Ship") {
+							cell.innerText = "SHIP";
+						} else {
+							alert('wat');
+						}
+					}
+				}
+
 			}
 		</script>
 	</head>
@@ -98,7 +114,7 @@
 
 				<div class="row">
 					<div class="span12" id="gameBoardDiv">
-						<table class="table-bordered" id="gameBoard">
+						<table class="table table-bordered" id="gameBoard">
 							<tbody>
 							</tbody>
 						</table>
