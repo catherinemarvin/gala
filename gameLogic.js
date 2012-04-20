@@ -5,12 +5,15 @@
 var maxX = 9;
 var maxY = 9;
 
-var Ship = function (id, x, y, facing) {
+var Ship = function (id, x, y, facing, playerId, fleet) {
 	this.shipId = id;
 	this.position = {x : x, y : y};
 	this.type = 'Ship';
 	this.facing = facing;
 	this.lastPosition = {x : x, y : y};
+        this.playerId = playerId
+        this.fleet = fleet
+        this.health = 10
 	return this
 }
 
@@ -50,10 +53,17 @@ Ship.prototype.move = function (distance) {
 	return this;
 }
 
+Ship.prototype.destroy = function (gameBoard){
+        delete this.fleet[this.shipId]
+        board[this.position.x][this.position.y] = new logic.Space(this.position.x,this.position.y); 
+}
+
+
 var Space = function (x,y) {
 	this.shipId = null;
 	this.position = {x: x, y: y};
 	this.type = "Space"
+        this.bounced = false
 	return this
 }
 

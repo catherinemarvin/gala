@@ -43,6 +43,8 @@ class Fleet:
     for key in self.state.playerShips: #infoJson['ships'] is a dictionary of dictionaries
       ship = self.state.playerShips[key] 
       buildShip = globals()[ ship['type'] ]
+      print 'HERE IS THE FLEET OBJECT'
+      print self
       self.ships[names[i]] = buildShip(ship, names[i], self)
       self.shipNames[ship['shipId']] = names[i]
       i = i + 1
@@ -72,20 +74,20 @@ class Fleet:
 
 class Ship():
   def __init__(self, shipJson, name, fleet):
-    self.fleet = fleet
-    self.name = name
+    self.__fleet = fleet
+    self.__name = name
     for key in shipJson:
       print key
       self.__dict__[key] = shipJson[key]
 
   def move(self, distance):
-    self.fleet.modifyUpdateObject(self.shipId, 'move', {'distance': distance})
+    self.__fleet.modifyUpdateObject(self.shipId, 'move', {'distance': distance})
 
   def turn(self, relativeTurn):
-    self.fleet.modifyUpdateObject(self.shipId, 'turn', {'direction': relativeTurn})
+    self.__fleet.modifyUpdateObject(self.shipId, 'turn', {'direction': relativeTurn})
 
   def shoot(self):
-    self.fleet.modifyUpdateObject(self.shipId, 'shoot') 
+    self.__fleet.modifyUpdateObject(self.shipId, 'shoot') 
 
   def update(self, shipJson):
     for key in shipJson:
