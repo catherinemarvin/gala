@@ -53,9 +53,9 @@ Ship.prototype.move = function (distance) {
 	return this;
 }
 
-Ship.prototype.destroy = function (gameBoard){
-        delete this.fleet[this.shipId]
-        board[this.position.x][this.position.y] = new logic.Space(this.position.x,this.position.y); 
+Ship.prototype.destroy = function (gameBoard, playerFleet){
+        delete playerFleet[this.shipId]
+        gameBoard[this.position.x][this.position.y] = new Space(this.position.x,this.position.y); 
 }
 
 
