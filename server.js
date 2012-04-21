@@ -236,7 +236,7 @@ var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPo
        var bulletDest = null
        if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
           shipHasExecutedOrder[shipId] = true
-          bulletDest = ship.shoot(board)
+          bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, destroyedShips)
        }
      }
      for (i in rightOrders){

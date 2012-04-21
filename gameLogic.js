@@ -105,7 +105,7 @@ Ship.prototype.move = function (distance) {
 
 Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips, damage){
   this.health = this.health - damage
-  if (health <= 0){
+  if (this.health <= 0){
   this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
   }
 }
