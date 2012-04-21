@@ -13,7 +13,9 @@ var Ship = function (id, x, y, facing, playerId, fleet) {
 	this.lastPosition = {x : x, y : y};
         this.playerId = playerId
         this.fleet = fleet
-        this.health = 10
+        this.health = 2
+        this.damage = 1
+        this.range = 3
 	return this
 }
 Ship.prototype.turn = function (direction) {
@@ -101,8 +103,121 @@ Ship.prototype.move = function (distance) {
 	return this;
 }
 
-Ship.prototype.destroy = function (gameBoard, playerFleet){
-        delete playerFleet[this.shipId]
+Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips, damage){
+  this.health = this.health - damage
+  if (health <= 0){
+  this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
+  }
+}
+
+Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips){
+  var xPos = this.position.x
+  var yPos = this.position.y
+  var bulletDest = {}
+  if (this.facing == "up"){
+     for (var i = yPos - 1 ; i < this.range ; i = i - 1){
+        if (i >= 0){ //grid boundaries
+           if (gameBoard[xPos][i] instanceof Ship){
+             ship = gameBoard[xPos][i]
+             ship.takeDamage(gameBoard, playerLeftShips, playerRightShips, destroyedShips, this.damage)
+             bulletDest.x = xPos
+             bulletDest.y = i
+             break
+           }
+        }
+        else{
+           bulletDest.x = xPos
+           bulletDest.y = 0
+           break
+        }      
+     }    
+     if (bulletDest.x == null){
+       bulletDest.x = xPos
+       bulletDest.y = yPos - this.range
+     }
+  }
+  if (this.facing == "right"){
+     for (var i = xPos + 1 ; i < this.range ; i = i + 1){
+        if (i <= maxX ){ //grid boundaries
+           if (gameBoard[i][yPos] instanceof Ship){
+             ship = gameBoard[i][yPos]
+             ship.takeDamage(gameBoard, playerLeftShips, playerRightShips, destroyedShips, this.damage)
+             bulletDest.x = i
+             bulletDest.y = yPos
+             break
+           }
+        }
+        else{
+          bulletDest.x = maxX
+          bulletDest.y = yPos
+          break
+        }
+     }
+     if (bulletDest.x == null){
+       bulletDest.x = xPos + this.range
+       bulletDest.y = yPos 
+     }
+     
+  }
+  if (this.facing == "left"){
+     for (var i = xPos - 1 ; i < this.range ; i = i - 1){
+        if(i >= 0){
+           if (gameBoard[i][yPos] instanceof Ship){
+             ship = gameBoard[i][yPos]
+             ship.takeDamage(gameBoard, playerLeftShips, playerRightShips, destroyedShips, this.damage)
+             bulletDest.x = i
+             bulletDest.y = yPos
+             break
+           }
+        }
+        else{
+          bulletDest.x = 0
+          bulletDest.y = yPos
+          break
+        } 
+     }
+     if (bulletDest.x == null){
+       bulletDest.x = xPos - this.range
+       bulletDest.y = yPos
+     }
+  }
+  if (this.facing == "down"){
+    for (var i = yPos+1 ; i < this.range ; i = i +1){
+        if (i <= maxY){
+          if (gameBoard[xPos][i] instanceof Ship){
+             ship = gameBoard[xPos][i]
+             ship.takeDamage(gameBoard, playerLeftShips, playerRightShips, destroyedShips, this.damage)
+             bulletDest.x = xPos
+             bulletDest.y = i
+             break
+          }
+        }
+        else{
+          bulletDest.x = xPos
+          bulletDest.y = maxY
+          break
+        }
+    }
+    if (bulletDest.x == null){
+       bulletDest.x = xPos
+       bulletDest.y = yPos + this.range
+    }
+  }  
+
+  return bulletDest
+
+}
+
+Ship.prototype.destroy = function (gameBoard, playerLeftShips, playerRightShips, destroyedShips, manner){
+        if (this.fleet === 'playerLeftShips'){
+           delete playerLeftShips[this.shipId]
+        }
+        else if(this.fleet === 'playerRightShips'){
+           delete playerRightShips[this.shipId]
+        }
+      
+        destroyedShips.push({'shipId': this.shipId, 'manner': manner})
+        
         gameBoard[this.position.x][this.position.y] = new Space(this.position.x,this.position.y); 
 }
 
