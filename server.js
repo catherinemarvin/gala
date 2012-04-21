@@ -172,7 +172,7 @@ var executeOrders = function (leftOrders, rightOrders) {
 	console.log("executing orders")
 	console.log(leftOrders);
 	console.log(rightOrders);
-        
+        var destroyedShips = [] 
         if ( leftOrders == undefined){
           leftOrders = {}
           leftOrders.orders = []
@@ -202,13 +202,13 @@ var executeOrders = function (leftOrders, rightOrders) {
 	var leftMovement = leftOrders.orders.filter(function (n) {return n.action == 'move'})
 	var rightMovement = rightOrders.orders.filter(function (n) {return n.action == 'move'})
 
-	executeMovement(leftMovement, rightMovement, allDest, allShipStartPos, shipHasExecutedOrder);
+	executeMovement(leftMovement, rightMovement, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips);
 	console.log("executed executeMovement");
 
         var leftShoot = leftOrders.orders.filter(function (n) {return n.action == 'shoot'})
-        var rigthShoot = rightOrders.orders.filter(function(n) {return n.action == 'shoot'})
+        var rightShoot = rightOrders.orders.filter(function(n) {return n.action == 'shoot'})
         
-        executeShooting(leftShoot, rightShoot, allDest, allShipStartPos, shipHasExecutedOrder)
+        executeShooting(leftShoot, rightShoot, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips)
 	//executeFiring(leftOrders, rightOrders) <- will be done after moves works...
 }
 
@@ -237,28 +237,30 @@ var executeTurn = function (leftOrders, rightOrders, allDest, allShipStartPos, s
 
 }
 
-var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder){
+var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips){
      for (i in leftOrders) {
        var order = leftOrders[i]
        var shipId = order.shipName
        var ship = playerLeftShips[shipId]
+       var bulletDest = null
        if (!(ship === undefined) && shipHasExecutedOrder.shipId === undefined){
           shipHasExecutedOrder.shipId = true
-          ship.shoot(board)
+          bulletDest = ship.shoot(board)
        }
      }
      for (i in rightOrders){
        var order = rightOrders[i]
        var shipId = order.shipName
        var ship = playerRightShips[shipId]
+       var bulletDest = null
        if(!(ship === undefined) && shipHasExecutedOrder.shipId === undefined){
          shipHasExecutedOrder.shipId = true
-         ship.shoot(board)
+         bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, destroyedShips)
        }
      }
 }
 
-var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder) {
+var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips) {
 	console.log('executing movement phase');
 	for (i in leftOrders) {
 		var order = leftOrders[i];
@@ -333,12 +335,7 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
             for (j in allDest[i]){
               var ship = allDest[i][j]
               console.log(ship)
-              if (ship.fleet === 'playerLeftShips'){
-                ship.destroy(board, playerLeftShips)
-              }
-              else if (ship.fleet === 'playerRightShips'){
-                ship.destroy(board, playerRightShips)
-              }
+              ship.destroy(board, playerLeftShips, playerRightShips, destroyedShips, 'crashed')
 
             }
           }
