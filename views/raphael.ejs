@@ -72,14 +72,14 @@
 						rect.node.id="cell"+i+","+j
 					}
 				}
-				t = setTimeout(loadBoard,5000);
+				t = setTimeout(loadBoard,2000);
 			}
 
 			var loadBoard = function () {
 				console.log("loading board...");
 				$.post("/getBoardState", function (data) {
 					drawBoard(data);
-					t = setTimeout(loadBoard,5000);
+					t = setTimeout(loadBoard,2000);
 				});
 			}
 

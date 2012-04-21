@@ -72,13 +72,13 @@ Ship.prototype.move = function (distance) {
 	var yPos = this.position.y;
 
 	if (this.facing == "up") {
-		this.position = {x: xPos, y: yPos + distance}
+		this.position = {x: xPos, y: yPos - distance}
 	} else if (this.facing == "right") {
 		this.position = {x: xPos + distance, y: yPos}
 	} else if (this.facing == "left") {
 		this.position = {x: xPos - distance, y: yPos}
 	} else if (this.facing == "down") {
-		this.position = {x: xPos, y: yPos - distance}
+		this.position = {x: xPos, y: yPos + distance}
 	} else {
 		console.log("wat");
 	}
