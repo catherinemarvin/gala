@@ -208,7 +208,7 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
 
 }
 
-Ship.prototype.destroy = function (gameBoard, playerLeftShips, playerRightShips, destroyedShips, manner){
+Ship.prototype.destroy = function (gameBoard, playerLeftShips, playerRightShips, changes, manner){
         if (this.fleet === 'playerLeftShips'){
            delete playerLeftShips[this.shipId]
         }
@@ -216,7 +216,7 @@ Ship.prototype.destroy = function (gameBoard, playerLeftShips, playerRightShips,
            delete playerRightShips[this.shipId]
         }
       
-        destroyedShips.push({'shipId': this.shipId, 'manner': manner})
+        changes.destroyed.push({'shipId': this.shipId, 'manner': manner})
         
         gameBoard[this.position.x][this.position.y] = new Space(this.position.x,this.position.y); 
 }

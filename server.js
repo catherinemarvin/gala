@@ -212,6 +212,7 @@ var executeTurn = function (leftOrders, rightOrders, allDest, allShipStartPos, s
      if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
        shipHasExecutedOrder[shipId] = true
        ship.turn(direction)
+       changes.turns.push({'ship' : ship , 'direction' : direction})
      }
   }
   for (i in rightOrders){
@@ -223,6 +224,7 @@ var executeTurn = function (leftOrders, rightOrders, allDest, allShipStartPos, s
     if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
        shipHasExecutedOrder[shipId] = true
        ship.turn(direction)
+       changes.turns.push({'ship' : ship , 'direction' : direction})
      }
   } 
 
@@ -236,7 +238,8 @@ var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPo
        var bulletDest = null
        if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
           shipHasExecutedOrder[shipId] = true
-          bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, destroyedShips)
+          bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, changes)
+          changes.shots.push({'ship': ship , 'finalDest' : bulletDest})
        }
      }
      for (i in rightOrders){
@@ -246,7 +249,8 @@ var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPo
        var bulletDest = null
        if(!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
          shipHasExecutedOrder[shipId] = true
-         bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, destroyedShips)
+         bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, changes)
+         changes.shots.push({'ship': ship , 'finalDest' : bulletDest})
        }
      }
 }
@@ -263,6 +267,7 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                   shipHasExecutedOrder[shipId] = true
                   console.log('LEFT SHIP MOVING!!!!!!!!!!!!!!!!!!!!')
 		  ship.move(dist);
+                  changes.moves.push({'ship' : ship , 'distance': dist})
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
                   var oldXPos = ship.lastPosition.x
@@ -273,7 +278,7 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                      allDest[[newXPos, newYPos]] = [ship]
                   }
                   else{
-                    allDest[[newXPos, newYPos]].push(ship)
+                     allDest[[newXPos, newYPos]].push(ship)
                   }
                   delete allShipStartPos[shipId]
                }
@@ -290,6 +295,7 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                   console.log('RIGHT SHIP MOVING!!!!!!!!!!!!!!!!')
                   shipHasExecutedOrder[shipId] = true
                   ship.move(dist)
+                  changes.moves.push({'ship' : ship , 'distance': dist})
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
                   var oldXPos = ship.lastPosition.x
@@ -329,7 +335,7 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
           if(allDest[i].length > 1){
             for (j in allDest[i]){
               var ship = allDest[i][j]
-              ship.destroy(board, playerLeftShips, playerRightShips, destroyedShips, 'crashed')
+              ship.destroy(board, playerLeftShips, playerRightShips, changes, 'crashed')
             }
           }
         }
@@ -421,6 +427,11 @@ var createSpace = function (x,y) {
 //function called at the very beginning to create a board
 var playerLeftShips = null;
 var playerRightShips = null;
+var changes = {}
+changes.turns = []
+changes.moves = []
+changes.shots = []
+changes.destroyed = []
 var board = null;
 var maxX = 9;
 var maxY = 9;
