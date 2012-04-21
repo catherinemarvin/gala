@@ -2,7 +2,9 @@ import command
 
 fleet = command.Fleet(['Foo', 'Bar'])
 
+
+foo = fleet.getShip('Foo')
+
 while(True):
-  #foo = fleet.getShip('Foo')
-  #foo.move(1)
+  foo.move(1)
   fleet.executeOrders()
