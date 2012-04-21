@@ -87,7 +87,7 @@ class Ship():
     self.__fleet.modifyUpdateObject(self.shipId, 'turn', {'direction': relativeTurn})
 
   def shoot(self):
-    self.__fleet.modifyUpdateObject(self.shipId, 'shoot') 
+    self.__fleet.modifyUpdateObject(self.shipId, 'shoot', {}) 
 
   def update(self, shipJson):
     for key in shipJson:
