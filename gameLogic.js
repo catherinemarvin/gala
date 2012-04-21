@@ -16,7 +16,55 @@ var Ship = function (id, x, y, facing, playerId, fleet) {
         this.health = 10
 	return this
 }
-
+Ship.prototype.turn = function (direction) {
+        if (this.facing == "up") {
+                if (direction == "left"){
+                    this.facing = "left"
+                }
+                else if (direction == "right"){
+                    this.facing = "right"
+                }
+                else if (direction == "flip"){
+                    this.facing = "down"
+                }
+        } 
+        else if (this.facing == "right") {
+                if (direction == "left"){
+                    this.facing = "up"
+                }
+                else if (direction == "right"){
+                    this.facing = "down"
+                }
+                else if (direction == "flip"){
+                    this.facing = "left"
+                }
+        } 
+        else if (this.facing == "left") {
+               if (direction == "left"){
+                    this.facing = "down"
+                }
+                else if (direction == "right"){
+                    this.facing = "up"
+                }
+                else if (direction == "flip"){
+                    this.facing = "right"
+                }
+        } 
+        else if (this.facing == "down") {
+               if (direction == "left"){
+                    this.facing = "right"
+                }
+                else if (direction == "right"){
+                    this.facing = "left"
+                }
+                else if (direction == "flip"){
+                    this.facing = "up"
+                }
+        } 
+        else {
+                console.log("wat");
+        }
+}
 Ship.prototype.move = function (distance) {
 	console.log("moving ship")
 	this.lastPosition = this.position;
@@ -24,7 +72,7 @@ Ship.prototype.move = function (distance) {
 	var yPos = this.position.y;
 
 	if (this.facing == "up") {
-		this.position = {x: xPox, y: yPox + distance}
+		this.position = {x: xPos, y: yPos + distance}
 	} else if (this.facing == "right") {
 		this.position = {x: xPos + distance, y: yPos}
 	} else if (this.facing == "left") {

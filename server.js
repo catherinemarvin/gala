@@ -77,7 +77,7 @@ server.post('/start', function (req, res) {
 		}
 		res.send(ret);
 		//start the timer for both players
-		t = setTimeout(update,5000)
+		t = setTimeout(update,2000)
 		
 	} else {
 		console.log("??????????");
@@ -165,20 +165,23 @@ var update = function () {
 	}
 	responseStreams[players.playerRight].send(rightRet);
 	console.log("sent right ret")
-	t = setTimeout(update, 10000)
+	t = setTimeout(update,2000)
 }
 
 var executeOrders = function (leftOrders, rightOrders) {
 	console.log("executing orders")
 	console.log(leftOrders);
 	console.log(rightOrders);
-
+        
         if ( leftOrders == undefined){
-          leftOrders = []
+          leftOrders = {}
+          leftOrders.orders = []
         }
         if (rightOrders == undefined){
-          rightOrders = []
+          rightOrders = {}
+          rightOrders.orders = []
         }
+        var shipHasExecutedOrder = {}
         var allShipStartPos = {}
         for (i in playerLeftShips){
           var ship = playerLeftShips[i]
@@ -190,22 +193,54 @@ var executeOrders = function (leftOrders, rightOrders) {
         }
 
         var allDest = {}
+
+        var leftTurn = leftOrders.orders.filter(function (n) { return n.action == 'turn'})
+        var rightTurn = rightOrders.orders.filter(function (n) { return n.action == 'turn'})
+        
+        executeTurn(leftTurn, rightTurn, allDest, allShipStartPos, shipHasExecutedOrder)
+         
 	var leftMovement = leftOrders.orders.filter(function (n) {return n.action == 'move'})
 	var rightMovement = rightOrders.orders.filter(function (n) {return n.action == 'move'})
-	executeMovement(leftMovement, rightMovement, allDest, allShipStartPos);
+
+	executeMovement(leftMovement, rightMovement, allDest, allShipStartPos, shipHasExecutedOrder);
 	console.log("executed executeMovement");
 	//executeFiring(leftOrders, rightOrders) <- will be done after moves works...
 }
 
-var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPos) {
+var executeTurn = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder){
+  console.log('executing turning phase')
+  for (i in leftOrders) {
+     var order = leftOrders[i]
+     var direction = order.actArgs.direction
+     var shipId = order.shipName
+     var ship = playerLeftShips[shipId]
+     if (!(ship === undefined) && shipHasExecutedOrder.shipId === undefined){
+       shipHasExecutedOrder.shipId = true
+       ship.turn(direction)
+     }
+  }
+  for (i in rightOrders){
+    var order = rightOrders[i]
+    var direction = order.actArgs.direction
+    var shipId = order.shipName
+    var ship = playerRightShips[shipId]
+    if (!(ship === undefined) && shipHasExecutedOrder.shipId === undefined){
+       shipHasExecutedOrder.shipId = true
+       ship.turn(direction)
+     }
+  } 
+
+}
+
+var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder) {
 	console.log('executing movement phase');
 	for (i in leftOrders) {
 		var order = leftOrders[i];
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
                 var ship = playerLeftShips[shipId]
-                if (!(ship === undefined)){
-                  console.log('should only happen once') 
+                if (!(ship === undefined) && shipHasExecutedOrder.shipId === undefined){
+                  shipHasExecutedOrder.shipId = true
 		  ship.move(dist);
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
@@ -229,8 +264,8 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
 		var ship = playerRightShips[shipId]
-                if (!(ship === undefined)){
-                  console.log('happens alla time')
+                if (!(ship === undefined) && shipHasExecutedOrder.shipId === undefined){
+                  shipHasExecutedOrder.shipId = true
                   ship.move(dist)
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
@@ -247,10 +282,6 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                   delete allShipStartPos[shipId]
                }
 	}
-        console.log("ALLDEST BEFORE STATIONARY SHIPS")
-        console.log(allDest)
-        console.log("STATIONARY SHIPS")
-        console.log(allShipStartPos)
 
         for (i in allShipStartPos){
           var shipId = allShipStartPos[i]['shipId']
@@ -271,20 +302,15 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
           }
 
         }
-        console.log("HERES ALLDEST!!!!!!!!!!!!!!!!!!!!!")
-        console.log( allDest )
         for (i in allDest){
           if(allDest[i].length > 1){
             for (j in allDest[i]){
-              console.log('ship destroyed~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
               var ship = allDest[i][j]
               console.log(ship)
               if (ship.fleet === 'playerLeftShips'){
-                console.log('left ship should be destroyed???????????????????????????')
                 ship.destroy(board, playerLeftShips)
               }
               else if (ship.fleet === 'playerRightShips'){
-                console.log('right ship destroyed ???????????????????????????????????')
                 ship.destroy(board, playerRightShips)
               }
 
