@@ -83,7 +83,7 @@
 					board = data;
 					drawNewBoard(data);
 					//remove loop so i can debug properly
-					t = setTimeout(loadBoard,2000);
+					//t = setTimeout(loadBoard,2000);
 				});
 			}
 
@@ -124,7 +124,7 @@
 
 							//console.log("SHIP!!!");
 							//console.log(boardObj);
-							//newShip.node.id = "ship"+boardObj.shipId;
+							newShip.node.id = "ship"+boardObj.shipId;
 							//$(newShip.node).attr("class",boardObj.playerId)
 							//newShip.node.class = boardObj.playerId;
 							newShip.attr({fill:"red"});
@@ -162,33 +162,35 @@
 			//accepts a list of ships that have turned and moves
 			//ex: [{shipId: foo},{shipId: bar}]...
 			//these ships are in their final location, so we just need to compare against our local copy
+
 			var displayTurnsAndMoves = function (turns, moves) {
 				console.log('displayingTurns');
 				for (i in turns) {
-					var ship = turns[i];
+					console.log('woo')
+					var ship = turns[i].ship;
 					var shipId = ship.shipId;
 					var facing = ship.facing;
+					console.log(ship)
 					var oldFacing = board[ship.position.x][ship.position.y].facing;
 					var turn = null;
-					if (facing == "up") {
-						turn = 0;
-					} else if (facing == "right") {
-						turn = 90;
-					} else if (facing == "down") {
-						turn = 180;
-					} else if (facing == "left") {
-						turn = 270;
-					} else {
-						console.log("????");
+					var dirToDeg = {
+						'up' : 0,
+						'right' : 90,
+						'down' : 180,
+						'left' : 270
 					}
-					paper.getById(shipRaphaelHash[shipId]).transform("T"+facing)
+					var degree = dirToDeg[facing] - dirToDeg[oldFacing]
+					paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
 				}
 				console.log('displayingMoves');
 				for (i in moves) {
-					var ship = turns[i];
+					console.log('translation')
+					var ship = moves[i].ship;
 					var shipId = ship.shipId;
-					var distance = ship.distance
-					paper.getById(shipRaphaelHash[shipId]).transform("...t"+distance*50);
+					var distance = ship.distance;
+					//paper.getById(shipRaphaelHash[shipId]).transform("r180");
+					paper.getById(shipRaphaelHash[shipId]).transform("...t0,-"+distance*50);
+					//paper.getById(shipRaphaelHash[shipId]).animate({transform: "...t"+distance*50})
 				}
 			}
 
