@@ -8,6 +8,7 @@
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
 		<link href="/static/raphael.css" rel="stylesheet">
+		<script src="/nowjs/now.js"></script>
 
 		<!--HTML5 shim, for IE6-8 support of HTML5 elements. Does it actually work? No clue, but here's to hoping it does!-->
 
@@ -26,6 +27,7 @@
 			}
 		</script>
 		<script>
+
 			var board = null;
 
 			var shipRaphaelHash = {}
@@ -38,6 +40,13 @@
 
 			$(document).ready(function () {
 				console.log("ready and waiting");
+				now.ready( function () {
+					now.getChanges = function (changes) {
+						updateBoard(changes);
+					}
+				});
+
+
 
 
 				board = new Array(maxX+1);
@@ -74,7 +83,7 @@
 						//rect.node.id="cell"+i+","+j
 					}
 				}
-				t = setTimeout(loadBoard,2000);
+				loadBoard();
 			}
 
 			var loadBoard = function () {
@@ -84,6 +93,7 @@
 					drawNewBoard(data);
 					//remove loop so i can debug properly
 					//t = setTimeout(loadBoard,2000);
+					//t = setTimeout(getDeltas,2000);
 				});
 			}
 
@@ -135,14 +145,8 @@
 				}
 			}
 
-			//get a JSON of changes made
-			var getDeltas = function () {
-				$.post("/getDeltas", function (data) {
-					updateBoard(data);
-				})
-			}
-
 			var updateBoard = function (data) {
+				console.log('updating!');
 				var newBoard = data.board;
 				var turns = data.turns;
 				var moves = data.moves;
@@ -150,11 +154,11 @@
 				var firstDestroyed = data.destroyed.filter(function (n) {return n.manner=="crashed"});
 				var secondDestroyed = data.destroyed.filter(function (n) {return n.manner=="shot"});
 
-				verifyBoard(newBoard);
+				//verifyBoard(newBoard);
 				displayTurnsAndMoves(turns,moves)
 				displayDestruction(firstDestroyed);
-				displayShots(shots);
-				displayDestruction(secondDestroyed);
+				//displayShots(shots);
+				//displayDestruction(secondDestroyed);
 				board = newBoard;
 			}
 
@@ -166,12 +170,11 @@
 			var displayTurnsAndMoves = function (turns, moves) {
 				console.log('displayingTurns');
 				for (i in turns) {
-					console.log('woo')
+					console.log('TURNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 					var ship = turns[i].ship;
 					var shipId = ship.shipId;
-					var facing = ship.facing;
-					console.log(ship)
-					var oldFacing = board[ship.position.x][ship.position.y].facing;
+					var facing = turns[i].direction;
+					//var oldFacing = board[ship.position.x][ship.position.y].facing;
 					var turn = null;
 					var dirToDeg = {
 						'up' : 0,
@@ -179,15 +182,22 @@
 						'down' : 180,
 						'left' : 270
 					}
-					var degree = dirToDeg[facing] - dirToDeg[oldFacing]
+
+					var relRot = {
+						'right': 90,
+						'left' : -90
+					}
+					//var degree = dirToDeg[facing] - dirToDeg[oldFacing]
+					var degree = relRot[facing]
 					paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
+					//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
 				}
 				console.log('displayingMoves');
 				for (i in moves) {
 					console.log('translation')
 					var ship = moves[i].ship;
 					var shipId = ship.shipId;
-					var distance = ship.distance;
+					var distance = moves[i].distance;
 					//paper.getById(shipRaphaelHash[shipId]).transform("r180");
 					paper.getById(shipRaphaelHash[shipId]).transform("...t0,-"+distance*50);
 					//paper.getById(shipRaphaelHash[shipId]).animate({transform: "...t"+distance*50})
@@ -196,8 +206,14 @@
 
 			var displayShots = function (shots) {
 				console.log("display shooting");
-				for (i in shots) {
-					var ship = shots[i];
+			}
+
+			var displayDestruction = function (destroyed) {
+				console.log("destroying");
+				for (i in destroyed) {
+					var ship = destroyed[i].ship;
+					var shipId = ship.shipId;
+					paper.getById(shipRaphaelHash[shipId]).remove();
 				}
 			}
 		</script>

@@ -112,7 +112,6 @@ server.post("/getBoardState", function (req, res) {
 });
 
 //LONG POLLING.
-//TODO: add timer so if you write bad code that loops forever, the game continues.
 //Related: make game tick every second or so so the game is actually watchable.
 
 var update = function () {
@@ -122,6 +121,7 @@ var update = function () {
 		console.log("don't have all the orders");
 	}
 	console.log("updating!");
+	console.log(changes)
 	//clearTimeout(t);
 	//console.log(leftOrderQueue);
 	//console.log(rightOrderQueue);
@@ -155,7 +155,16 @@ var update = function () {
 	}
 	responseStreams[players.playerRight].send(rightRet);
 	console.log("sent right ret")
+	everyone.now.pushChanges();
 	t = setTimeout(update,2000)
+}
+
+everyone.now.pushChanges = function () {
+	everyone.now.getChanges(changes)
+	changes.turns = [];
+	changes.moves = [];
+	changes.shots = [];
+	changes.destroyed = [];
 }
 
 var executeOrders = function (leftOrders, rightOrders) {
@@ -196,7 +205,7 @@ var executeOrders = function (leftOrders, rightOrders) {
 	console.log("executed executeMovement");
 
         var leftShoot = leftOrders.orders.filter(function (n) {return n.action == 'shoot'})
-        var rightShoot = rightOrders.orders.filter(function(n) {return n.action == 'shoot'})
+        var rightShoot = rightOrders.orders.filter(function (n) {return n.action == 'shoot'})
         
         executeShooting(leftShoot, rightShoot, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips)
 	//executeFiring(leftOrders, rightOrders) <- will be done after moves works...
