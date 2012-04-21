@@ -17,6 +17,15 @@
 
 		<script src="/static/raphael-min.js"></script>
 		<script>
+			//this should realy come with Raphael but it doesn't.
+			Raphael.fn.triangle = function (x, y, size) {
+				var path = ["M",x,y];
+				path = path.concat(["L", (x + size/2), (y+size)]);
+				path = path.concat(["L", (x - size / 2), (y+size)]);
+				return this.path(path.concat(["z"]).join(" "));
+			}
+		</script>
+		<script>
 			var board = null;
 
 			var maxX = 9;
@@ -89,7 +98,22 @@
 						} else if (boardObj.type == "Ship") {
 							var xPos = boardObj.position.x;
 							var yPos = boardObj.position.y;
-							var newShip = paper.rect(xPos*50,yPos*50,50,50);
+							var heading = boardObj.facing
+							//var newShip = paper.rect(xPos*50,yPos*50,50,50);
+							var newShip = paper.triangle(xPos*50+25,yPos*50+10,30);
+
+							if (heading == "up") {
+								//do nothing, it's fine
+							} else if (heading == "right") {
+								newShip.transform("r90");
+							} else if (heading == "down") {
+								newShip.transform("r180");
+							} else if (heading == "left") {
+								newShip.transform("r270");
+							} else {
+								console.log('asdfasdfasdf');
+							}
+
 							//console.log("SHIP!!!");
 							//console.log(boardObj);
 							newShip.node.id = "ship"+boardObj.shipId;
