@@ -28,6 +28,8 @@
 		<script>
 			var board = null;
 
+			var shipRaphaelHash = {}
+
 			var maxX = 9;
 			var maxY = 9;
 
@@ -69,7 +71,7 @@
 					for (var j = 0; j <= maxY; j++) {
 						var rect = paper.rect(i*50,j*50,50,50);
 						rect.attr({fill: "green"});
-						rect.node.id="cell"+i+","+j
+						//rect.node.id="cell"+i+","+j
 					}
 				}
 				t = setTimeout(loadBoard,2000);
@@ -78,12 +80,14 @@
 			var loadBoard = function () {
 				console.log("loading board...");
 				$.post("/getBoardState", function (data) {
-					drawBoard(data);
+					board = data;
+					drawNewBoard(data);
+					//remove loop so i can debug properly
 					t = setTimeout(loadBoard,2000);
 				});
 			}
 
-			var drawBoard = function (newBoard) {
+			var drawNewBoard = function (newBoard) {
 				console.log("drawing board");
 				console.log(newBoard)
 				for (var i = 0; i <= maxX; i++) {
@@ -99,8 +103,12 @@
 							var xPos = boardObj.position.x;
 							var yPos = boardObj.position.y;
 							var heading = boardObj.facing
+							var shipId = boardObj.shipId
 							//var newShip = paper.rect(xPos*50,yPos*50,50,50);
 							var newShip = paper.triangle(xPos*50+25,yPos*50+10,30);
+
+
+							shipRaphaelHash[shipId] = newShip.id
 
 							if (heading == "up") {
 								//do nothing, it's fine
@@ -116,8 +124,8 @@
 
 							//console.log("SHIP!!!");
 							//console.log(boardObj);
-							newShip.node.id = "ship"+boardObj.shipId;
-							$(newShip.node).attr("class",boardObj.playerId)
+							//newShip.node.id = "ship"+boardObj.shipId;
+							//$(newShip.node).attr("class",boardObj.playerId)
 							//newShip.node.class = boardObj.playerId;
 							newShip.attr({fill:"red"});
 						} else {
@@ -127,70 +135,69 @@
 				}
 			}
 
-			var loadMovements = function (newBoard) {
-				for (var i = 0; i <= maxX; i++) {
-					for (var j = 0; j <= maxY; j++) {
-						var boardObj = newBoard[i][j];
-						if (boardObj.type == "Space") {
-							//do nothing
-						} else if (boardObj.type == "Ship") {
-							allShips.push(boardObj);
-						} else {
-							alert('wat');
-						}
-					}
-				}
-			}
-
-			/*
-			var loadBoard = function () {
-				console.log("loading board...");
-				$.post("/getBoardState", function (data) {
-					console.log("got board state. time to draw!");
-					drawBoard(data)
+			//get a JSON of changes made
+			var getDeltas = function () {
+				$.post("/getDeltas", function (data) {
+					updateBoard(data);
 				})
-				t = setTimeout(loadBoard,5000);
 			}
 
-			setTimeout(loadBoard,5000);
+			var updateBoard = function (data) {
+				var newBoard = data.board;
+				var turns = data.turns;
+				var moves = data.moves;
+				var shots = data.shots;
+				var firstDestroyed = data.destroyed.filter(function (n) {return n.manner=="crashed"});
+				var secondDestroyed = data.destroyed.filter(function (n) {return n.manner=="shot"});
 
-			//NOTE: currently the board is increasing in x to the right and increasing in y down.
-			//this is the opposite of how the board is represented in server.js
-			//will fix this one day.
+				verifyBoard(newBoard);
+				displayTurnsAndMoves(turns,moves)
+				displayDestruction(firstDestroyed);
+				displayShots(shots);
+				displayDestruction(secondDestroyed);
+				board = newBoard;
+			}
 
-			var initializeBoard = function () {
 
-				console.log("initializing board...");
-				for (var j = maxY; j >= 0; j--) {
-					var toAdd = "<tr>";
-					for (var i = 0; i <= maxX; i++) {
-						toAdd += "<td id='cell"+i+","+j+"'>hi</td>"
+			//accepts a list of ships that have turned and moves
+			//ex: [{shipId: foo},{shipId: bar}]...
+			//these ships are in their final location, so we just need to compare against our local copy
+			var displayTurnsAndMoves = function (turns, moves) {
+				console.log('displayingTurns');
+				for (i in turns) {
+					var ship = turns[i];
+					var shipId = ship.shipId;
+					var facing = ship.facing;
+					var oldFacing = board[ship.position.x][ship.position.y].facing;
+					var turn = null;
+					if (facing == "up") {
+						turn = 0;
+					} else if (facing == "right") {
+						turn = 90;
+					} else if (facing == "down") {
+						turn = 180;
+					} else if (facing == "left") {
+						turn = 270;
+					} else {
+						console.log("????");
 					}
-					//console.log("row to add: "+toAdd);
-					$("#gameBoard").find("tbody").append(toAdd)
+					paper.getById(shipRaphaelHash[shipId]).transform("T"+facing)
+				}
+				console.log('displayingMoves');
+				for (i in moves) {
+					var ship = turns[i];
+					var shipId = ship.shipId;
+					var distance = ship.distance
+					paper.getById(shipRaphaelHash[shipId]).transform("...t"+distance*50);
 				}
 			}
 
-			var drawBoard = function (newBoard) {
-				//updates the board! 
-				console.log("drawing new board");
-				console.log(newBoard);
-				for (var i = 0; i <= maxX; i++) {
-					for (var j = 0; j <= maxY; j++) {
-						var cell = document.getElementById("cell"+i+","+j)
-						var boardObj = newBoard[i][j];
-						if (boardObj.type == "Space") {
-							cell.innerText = "SPACE";
-						} else if (boardObj.type == "Ship") {
-							cell.innerText = "SHIP";
-						} else {
-							alert('wat');
-						}
-					}
+			var displayShots = function (shots) {
+				console.log("display shooting");
+				for (i in shots) {
+					var ship = shots[i];
 				}
-
 			}
-			*/
 		</script>
 	</head>
 
@@ -212,7 +219,7 @@
 				<div class="row">
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
-						<!--<button onclick="loadOpeningBoard()">LOAD FIRST BOARD</button>-->
+						<button onclick="fireShot()">TEST SHOOTING ANIMATION</button>
 					</div>
 				</div>
 
