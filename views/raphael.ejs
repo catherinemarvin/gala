@@ -147,13 +147,14 @@
 
 			var updateBoard = function (data) {
 				console.log('updating!');
+				console.log(data)
 				clearBullets()
 				var newBoard = data.board;
 				var turns = data.turns;
 				var moves = data.moves;
 				var shots = data.shots;
 				var firstDestroyed = data.destroyed.filter(function (n) {return n.manner=="crashed"});
-				var secondDestroyed = data.destroyed.filter(function (n) {return n.manner=="shot"});
+				var secondDestroyed = data.destroyed.filter(function (n) {return n.manner=="shots"});
 
 				//verifyBoard(newBoard);
 				displayTurnsAndMoves(turns,moves)

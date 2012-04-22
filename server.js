@@ -249,6 +249,8 @@ var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPo
           shipHasExecutedOrder[shipId] = true
           bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, changes)
           changes.shots.push({'ship': ship , 'finalDest' : bulletDest})
+          console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+          console.log(changes)
        }
      }
      for (i in rightOrders){
@@ -260,6 +262,8 @@ var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPo
          shipHasExecutedOrder[shipId] = true
          bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, changes)
          changes.shots.push({'ship': ship , 'finalDest' : bulletDest})
+         console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+         console.log(changes)
        }
      }
 }
@@ -270,11 +274,9 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
 		var order = leftOrders[i];
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
-                console.log(order.shipName)
                 var ship = playerLeftShips[shipId]
                 if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
                   shipHasExecutedOrder[shipId] = true
-                  console.log('LEFT SHIP MOVING!!!!!!!!!!!!!!!!!!!!')
 		  var hasMoved = ship.move(dist);
                   if (hasMoved){
                     changes.moves.push({'ship' : ship , 'distance': dist})
@@ -297,13 +299,12 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
 
 
 	for (i in rightOrders) {
-                console.log("FOR I IN RIGHTORDERS ~~~~~~~~~~~~~~~~~~")
+                
 		var order = rightOrders[i];
 		var dist = order.actArgs.distance;
 		var shipId = order.shipName;
 		var ship = playerRightShips[shipId]
                 if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
-                  console.log('RIGHT SHIP MOVING!!!!!!!!!!!!!!!!')
                   shipHasExecutedOrder[shipId] = true
                   var hasMoved = ship.move(dist)
                   if (hasMoved){

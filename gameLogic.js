@@ -11,11 +11,11 @@ var Ship = function (id, x, y, facing, playerId, fleet) {
 	this.type = 'Ship';
 	this.facing = facing;
 	this.lastPosition = {x : x, y : y};
-        this.playerId = playerId
-        this.fleet = fleet
-        this.health = 2
-        this.damage = 1
-        this.range = 3
+  this.playerId = playerId
+  this.fleet = fleet
+  this.health = 2
+  this.damage = 1
+  this.range = 3
 	return this
 }
 Ship.prototype.turn = function (direction) {
@@ -108,7 +108,8 @@ Ship.prototype.move = function (distance) {
 Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips, damage){
   this.health = this.health - damage
   if (this.health <= 0){
-  this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
+    console.log('~~~~~~~~~~~~~~~~~~~~~DESTROYING~~~~~~~~~~~~~~~~~~~~~~')
+    this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
   }
 }
 
