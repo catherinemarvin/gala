@@ -1,8 +1,8 @@
 var logic = require('../gameLogic');
 
 var Scenario = function () {
-  this.maxX = 12
-  this.maxY = 12
+  this.maxX = 9
+  this.maxY = 9
   this.board = new Array(this.maxX+1);
 
   for (var i = 0; i <= this.maxX; i++) {
