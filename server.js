@@ -1,6 +1,7 @@
 var express = require('express');
 var nowjs = require('now');
 var logic = require('./gameLogic');
+var scenario = require('./scenarios/classicTest')
 
 var server = express.createServer();
 
@@ -459,7 +460,7 @@ var leftOrderQueue = [];
 var rightOrderQueue = [];
 
 var initialize = function () {
-
+        /*
 	board = new Array(maxX+1);
 
 	for (var i = 0; i <= maxX; i++) {
@@ -488,6 +489,15 @@ var initialize = function () {
 
 	board[9][9] = rightShip1;
 	board[9][8] = rightShip2;
+        */
+        
+        //console.log(scenario)
+        //console.log(scenario.Scenario)
+        var scene = new scenario.Scenario()
+        board = scene.board
+        playerRightShips = scene.playerRightShips
+        playerLeftShips = scene.playerLeftShips
+        
 }
 
 console.log("pre-initialize");
