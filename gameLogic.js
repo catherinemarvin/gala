@@ -2,20 +2,20 @@
 
 //ideally: set up some sort of export where we can acquire board features within gameLogic, but that is too much work. :3
 
-var maxX = 9;
-var maxY = 9;
 
-var Ship = function (id, x, y, facing, playerId, fleet) {
+var Ship = function (id, x, y, facing, playerId, fleet, maxX, maxY) {
 	this.shipId = id;
 	this.position = {x : x, y : y};
 	this.type = 'Ship';
 	this.facing = facing;
 	this.lastPosition = {x : x, y : y};
-  this.playerId = playerId
-  this.fleet = fleet
-  this.health = 2
-  this.damage = 1
-  this.range = 3
+        this.playerId = playerId
+        this.fleet = fleet
+        this.health = 2
+        this.damage = 1
+        this.range = 3
+        this.maxX = maxX
+        this.maxY = maxY
 	return this
 }
 Ship.prototype.turn = function (direction) {
@@ -69,6 +69,8 @@ Ship.prototype.turn = function (direction) {
 }
 Ship.prototype.move = function (distance) {
 	console.log("moving ship")
+        var maxX = this.maxX
+        var maxY = this.maxY
         var hasMoved = true
 	this.lastPosition = this.position;
 	var xPos = this.position.x;
@@ -114,6 +116,8 @@ Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShip
 }
 
 Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips){
+  var maxX = this.maxX
+  var maxY = this.maxY
   var xPos = this.position.x
   var yPos = this.position.y
   var bulletDest = {}

@@ -448,8 +448,8 @@ changes.moves = []
 changes.shots = []
 changes.destroyed = []
 var board = null;
-var maxX = 9;
-var maxY = 9;
+var maxX = null;
+var maxY = null;
 
 var players = {
 	playerLeft: null,
@@ -494,6 +494,8 @@ var initialize = function () {
         //console.log(scenario)
         //console.log(scenario.Scenario)
         var scene = new scenario.Scenario()
+        maxX = scene.maxX
+        maxY = scene.maxY
         board = scene.board
         playerRightShips = scene.playerRightShips
         playerLeftShips = scene.playerLeftShips

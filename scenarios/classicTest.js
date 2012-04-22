@@ -1,8 +1,8 @@
 var logic = require('../gameLogic');
 
 var Scenario = function () {
-  this.maxX = 9
-  this.maxY = 9
+  this.maxX = 12
+  this.maxY = 12
   this.board = new Array(this.maxX+1);
 
   for (var i = 0; i <= this.maxX; i++) {
@@ -14,8 +14,8 @@ var Scenario = function () {
      }
   }
 
-  var leftShip1 = new logic.Ship(0,0,0, 'right', 'playerLeft', "playerLeftShips");
-  var leftShip2 = new logic.Ship(1,1,0, 'left', 'playerLeft', "playerLeftShips");
+  var leftShip1 = new logic.Ship(0,0,0, 'right', 'playerLeft', "playerLeftShips", this.maxX, this.maxY);
+  var leftShip2 = new logic.Ship(1,1,0, 'left', 'playerLeft', "playerLeftShips", this.maxX , this.maxY);
 
 
   this.playerLeftShips = {0: leftShip1, 1: leftShip2};
