@@ -13,6 +13,6 @@ We'll figure it out, but for now here's the versions we're running
 nodejs v0.6.1
 
 nodejs modules: 
-	express 3.0.0alpha1
-	nowjs 0.8.1
+	express 0.7.1
+	now 0.8.1
 	ejs 0.7.1
