@@ -210,9 +210,11 @@
 
 			var displayDestruction = function (destroyed) {
 				console.log("destroying");
+				console.log(destroyed)
 				for (i in destroyed) {
-					var ship = destroyed[i].ship;
-					var shipId = ship.shipId;
+					//var ship = destroyed[i].ship;
+					//var shipId = ship.shipId;
+					var shipId = destroyed[i].shipId
 					paper.getById(shipRaphaelHash[shipId]).remove();
 				}
 			}
