@@ -275,8 +275,10 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                 if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
                   shipHasExecutedOrder[shipId] = true
                   console.log('LEFT SHIP MOVING!!!!!!!!!!!!!!!!!!!!')
-		  ship.move(dist);
-                  changes.moves.push({'ship' : ship , 'distance': dist})
+		  var hasMoved = ship.move(dist);
+                  if (hasMoved){
+                    changes.moves.push({'ship' : ship , 'distance': dist})
+                  }
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
                   var oldXPos = ship.lastPosition.x
@@ -303,8 +305,10 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                 if (!(ship === undefined) && shipHasExecutedOrder[shipId] === undefined){
                   console.log('RIGHT SHIP MOVING!!!!!!!!!!!!!!!!')
                   shipHasExecutedOrder[shipId] = true
-                  ship.move(dist)
-                  changes.moves.push({'ship' : ship , 'distance': dist})
+                  var hasMoved = ship.move(dist)
+                  if (hasMoved){
+                   changes.moves.push({'ship' : ship , 'distance': dist})
+                  }
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
                   var oldXPos = ship.lastPosition.x

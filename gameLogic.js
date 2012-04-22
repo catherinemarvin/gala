@@ -69,6 +69,7 @@ Ship.prototype.turn = function (direction) {
 }
 Ship.prototype.move = function (distance) {
 	console.log("moving ship")
+        var hasMoved = true
 	this.lastPosition = this.position;
 	var xPos = this.position.x;
 	var yPos = this.position.y;
@@ -96,11 +97,12 @@ Ship.prototype.move = function (distance) {
 				this.position = this.lastPosition
 				newX = this.position.x;
 				newY = this.position.y;
+                                hasMoved = false
 			}
 
 	console.log("X: "+this.position.x);
 	console.log("Y: "+this.position.y);
-	return this;
+	return hasMoved
 }
 
 Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips, damage){
