@@ -29,7 +29,11 @@ server.get('/spectate', function (req, res) {
 
 server.get('/raphael', function (req, res) {
 	res.render('raphael');
-})
+});
+
+server.get('/three', function (req, res) {
+	res.render('three');
+});
 
 server.post('/test', function (req, res) {
 	console.log("POSTED TO TEST");
