@@ -8,7 +8,7 @@ bar = fleet.getShip('Bar')
 
 while(True):
    enemyShips = fleet.state.visibleEnemyShips
-   target = enemyShips.values()[0]
+   target = enemyShips[0]
    position = target['position']
    if (position['x'] == foo.position['x']):
      if (position['y'] < foo.position['y'] and position['y'] >= foo.position['y'] - 3):
@@ -36,7 +36,17 @@ while(True):
          else: 
            foo.move(1)
          fleet.executeOrders()
-   else: 
-      foo.move(1)
+   elif (position['x'] < foo.position['x']):
+      if (foo.facing != 'left'):
+        foo.turn('left')
+      else: 
+        foo.move(1)
       fleet.executeOrders()
+   else:
+      if (foo.facing != 'right'):
+        foo.turn('right')
+      else: 
+        foo.move(1)
+      fleet.executeOrders()
+       
     

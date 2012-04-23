@@ -26,7 +26,7 @@ class GameState:
   def __init__(self, gameStateJson):
     self.playerShips = gameStateJson['playerShips']
     self.board = gameStateJson['board']
-    self.visibleEnemyShips = gameStateJson['visibleEnemyShips']
+    self.visibleEnemyShips = gameStateJson['visibleEnemyShips'].values()
 
 class Fleet:
   def __init__(self, names):
