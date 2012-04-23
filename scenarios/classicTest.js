@@ -15,7 +15,7 @@ var Scenario = function () {
   }
 
   var leftShip1 = new logic.Ship(0,0,0, 'right', 'playerLeft', "playerLeftShips", this.maxX, this.maxY);
-  var leftShip2 = new logic.Ship(1,1,0, 'left', 'playerLeft', "playerLeftShips", this.maxX , this.maxY);
+  var leftShip2 = new logic.Ship(1,1,0, 'right', 'playerLeft', "playerLeftShips", this.maxX , this.maxY);
 
 
   this.playerLeftShips = {0: leftShip1, 1: leftShip2};

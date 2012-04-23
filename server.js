@@ -78,7 +78,7 @@ server.post('/start', function (req, res) {
 		}
 		res.send(ret);
 		//start the timer for both players
-		t = setTimeout(update,2000)
+		t = setTimeout(update,5000)
 		
 	} else {
 		console.log("??????????");
@@ -161,7 +161,7 @@ var update = function () {
 	responseStreams[players.playerRight].send(rightRet);
 	console.log("sent right ret")
 	everyone.now.pushChanges();
-	t = setTimeout(update,2000)
+	t = setTimeout(update,5000)
 }
 
 everyone.now.pushChanges = function () {
@@ -284,7 +284,10 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                   shipHasExecutedOrder[shipId] = true
 		  var hasMoved = ship.move(dist);
                   if (hasMoved){
+                    console.log("CHANGES PUSHED~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                     changes.moves.push({'ship' : ship , 'distance': dist})
+                    console.log(changes)
+                    console.log(ship)
                   }
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
