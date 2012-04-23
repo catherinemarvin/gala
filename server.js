@@ -78,7 +78,7 @@ server.post('/start', function (req, res) {
 		}
 		res.send(ret);
 		//start the timer for both players
-		t = setTimeout(update,5000)
+		t = setTimeout(update,500)
 		
 	} else {
 		console.log("??????????");
@@ -161,7 +161,7 @@ var update = function () {
 	responseStreams[players.playerRight].send(rightRet);
 	console.log("sent right ret")
 	everyone.now.pushChanges();
-	t = setTimeout(update,5000)
+	t = setTimeout(update,500)
 }
 
 everyone.now.pushChanges = function () {

@@ -1,0 +1,206 @@
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<meta name="description" content="Gala: Learn how to program by commanding a robot army in space!">
+		<meta name="author" content="Kevin Hwang & Ajay Tripathy">
+		<title>SO CINEMATIC</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
+		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="/static/three.css" rel="stylesheet">
+		<script src="/nowjs/now.js"></script>
+		<!--HTML5 shim, for IE6-8 support of HTML5 elements. Does it actually work? No clue, but here's to hoping it does!-->
+
+		<!--[if lt IE 9]>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<script src="/static/Three.js"></script>
+
+		<script>
+
+
+		var camera, scene, renderer, geometry, material, mesh;
+
+		var board = null;
+
+		var maxX = 9;
+		var maxY = 9;
+
+		var shipToThree = {};
+
+		$(document).ready(function () {
+			board = new Array(maxX+1);
+
+			for (var i = 0; i <= maxX; i++) {
+				board[i] = new Array(maxX+1);
+			}
+
+			for (var i = 0; i <= maxX; i++) {
+				for (var j = 0; j <= maxY; j++) {
+					board[i][j] = null;
+				}
+			}
+			init();
+			//animate();
+		});
+
+		var init = function () {
+			$.post("/getBoardState", function (data) {
+				board = data;
+
+				scene = new THREE.Scene();
+
+		        camera = new THREE.PerspectiveCamera( 75, 1, 1, 10000 );
+		        camera.position.y = 500;
+		        camera.position.z = 1200;
+		        camera.lookAt(new THREE.Vector3(0,0,0))
+		        scene.add( camera );
+
+		        for (var i = 0; i <= maxX; i++) {
+		        	for (var j = 0; j <= maxY; j++) {
+		        		var boardObj = data[i][j];
+		        		if (boardObj.type == "Space") {
+		        			//add nothing for now
+
+		        		} else if (boardObj.type == "Ship") {
+		        			var heading = boardObj.facing
+
+		        			var geometry = new THREE.CubeGeometry(50,50,50);
+
+		        			//console.log(geometry)
+		        			var material = new THREE.MeshBasicMaterial({color:0xff0000, wireframe: true});
+		        			var mesh = new THREE.Mesh(geometry, material);
+		        			mesh.position.x = boardObj.position.x * 50;
+		        			mesh.position.z = boardObj.position.y * 50;
+		        			scene.add(mesh)
+		        			shipToThree[boardObj.shipId] = mesh
+		        			//mesh.matrixAutoUpdate = false;
+		        			if (heading == "up") {
+
+		        			} else if (heading == "right") {
+
+		        			} else if (heading == "down") {
+
+		        			} else if (heading == "left") {
+		        				
+		        			}
+
+		        		} else {
+		        			alert('wat');
+		        		}
+		        	}
+		        }
+
+		        renderer = new THREE.CanvasRenderer();
+		        renderer.setClearColorHex(0x000000);
+		        renderer.setSize( 500, 500 );
+
+		        document.getElementById("gameBoardDiv").appendChild( renderer.domElement );
+		        animate();
+	        });
+    	}
+
+    	var updateBoard = function (data) {
+			console.log('updating!');
+			console.log(data)
+			//clearBullets()
+			var newBoard = data.board;
+			var turns = data.turns;
+			var moves = data.moves;
+			var shots = data.shots;
+			var firstDestroyed = data.destroyed.filter(function (n) {return n.manner=="crashed"});
+			var secondDestroyed = data.destroyed.filter(function (n) {return n.manner=="shots"});
+
+			//verifyBoard(newBoard);
+			displayTurnsAndMoves(turns,moves)
+			//displayDestruction(firstDestroyed);
+			//displayShots(shots);
+			//displayDestruction(secondDestroyed);
+			board = newBoard;
+		}
+
+		var displayTurnsAndMoves = function (turns, moves) {
+			for (i in turns) {
+				console.log('TURNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+				var ship = turns[i].ship;
+				var shipId = ship.shipId;
+				var facing = turns[i].direction;
+				//var oldFacing = board[ship.position.x][ship.position.y].facing;
+				var turn = null;
+				var dirToDeg = {
+					'up' : 0,
+					'right' : 90,
+					'down' : 180,
+					'left' : 270
+				}
+
+				var relRot = {
+					'right': 90,
+					'left' : -90
+				}
+				//var degree = dirToDeg[facing] - dirToDeg[oldFacing]
+				var degree = relRot[facing]
+				paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
+				//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
+			}
+			console.log('displayingMoves');
+			for (i in moves) {
+				console.log('translation')
+				var ship = moves[i].ship;
+				var shipId = ship.shipId;
+				var distance = moves[i].distance;
+				//paper.getById(shipRaphaelHash[shipId]).transform("r180");
+				paper.getById(shipRaphaelHash[shipId]).transform("...t0,-"+distance*50);
+				//paper.getById(shipRaphaelHash[shipId]).animate({transform: "...t"+distance*50})
+			}
+		}
+
+
+		var animate = function () {
+			//requestAnimationFrame(animate);
+			render();
+		}
+
+		var render = function () {
+			//mesh.rotation.x += 0.01;
+			//mesh.rotation.y += 0.02;
+			renderer.render(scene, camera);
+		}
+		</script>
+	</head>
+
+	<body>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="#">Gala</a>
+				</div>
+			</div>
+		</div>
+		<div id="content">
+			<div class="hero">
+				<h1>ThreeJS--3x as GOOD</h1>
+			</div>
+			<div class="container">
+
+
+				<div class="row">
+					<div class="span12">
+						<p>Do a loop: ask for the board state and then display it.</p>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="span12" id="gameBoardDiv">
+					</div>
+				</div>
+
+				<hr>
+				<footer>
+					<p>&copy; Ajay Tripathy & Kevin Hwang 2012</p>
+				</footer>
+			</div>
+		</div>
+
+	</body>
+</html>

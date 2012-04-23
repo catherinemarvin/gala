@@ -143,6 +143,13 @@
 						}
 					}
 				}
+				putShipsOnTop();
+			}
+
+			var putShipsOnTop = function () {
+				for (i in shipRaphaelHash) {
+					paper.getById(shipRaphaelHash[i]).toFront()
+				}
 			}
 
 			var updateBoard = function (data) {
@@ -196,11 +203,12 @@
 				}
 				console.log('displayingMoves');
 				for (i in moves) {
-					console.log('translation')
+					console.log('translation!!!!!')
 					var ship = moves[i].ship;
 					var shipId = ship.shipId;
 					var distance = moves[i].distance;
 					//paper.getById(shipRaphaelHash[shipId]).transform("r180");
+
 					paper.getById(shipRaphaelHash[shipId]).transform("...t0,-"+distance*50);
 					//paper.getById(shipRaphaelHash[shipId]).animate({transform: "...t"+distance*50})
 				}
