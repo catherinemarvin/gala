@@ -157,7 +157,7 @@ var update = function () {
 	responseStreams[players.playerRight].send(rightRet);
 	console.log("sent right ret")
 	everyone.now.pushChanges();
-	t = setTimeout(update,2000)
+	t = setTimeout(update,200)
 }
 
 everyone.now.pushChanges = function () {
