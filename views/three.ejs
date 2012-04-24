@@ -29,6 +29,13 @@
 		var shipToThree = {};
 
 		$(document).ready(function () {
+
+			now.ready( function () {
+				now.getChanges = function (changes) {
+					updateBoard(changes);
+				}
+			});
+
 			board = new Array(maxX+1);
 
 			for (var i = 0; i <= maxX; i++) {
@@ -47,7 +54,7 @@
 		var loadSpaceShip = function (boardObj) {
 			var loader = new THREE.JSONLoader();
 			var material = new THREE.MeshBasicMaterial({color:0xff0000, wireframe: true});
-			loader.load('/static/spaceship.js', function (geometry) {
+			loader.load('/static/ship.js', function (geometry) {
 				console.log("loadan")
 				var mesh = new THREE.Mesh(geometry, material);
 				mesh.position.x = boardObj.position.x * 50;
@@ -58,20 +65,18 @@
 				shipToThree[boardObj.shipId] = mesh
 				var heading = boardObj.facing;
 				if (heading == "up") {
-    				mesh.rotation.y = Math.PI * 1;
-
-    			} else if (heading == "right") {
     				mesh.rotation.y = Math.PI * 1/2;
 
-    			} else if (heading == "down") {
+    			} else if (heading == "right") {
     				mesh.rotation.y = Math.PI * 0;
 
-    			} else if (heading == "left") {
+    			} else if (heading == "down") {
     				mesh.rotation.y = Math.PI * 3/2;
 
+    			} else if (heading == "left") {
+    				mesh.rotation.y = Math.PI * 1;
+
     			}
-
-
 				//remove this later and just cycle eventually. it makes everything very slow D:
 				requestAnimationFrame(animate);
 			});
@@ -100,37 +105,40 @@
 		        			console.log("SHIP")
 		        			console.log(boardObj.position);
 
-		        			var heading = boardObj.facing
+		        			//var heading = boardObj.facing
 
 		        			loadSpaceShip(boardObj)
 
-		        			//var geometry = new THREE.CubeGeometry(50,50,50);
+		        			/*
+		        			var geometry = new THREE.CubeGeometry(50,50,50);
 
 		        			//console.log(geometry)
-		        			//var material = new THREE.MeshBasicMaterial({color:0xff0000, wireframe: true});
-		        			//var mesh = new THREE.Mesh(geometry, material);
-		        			//mesh.position.x = boardObj.position.x * 50;
-		        			//mesh.position.z = boardObj.position.y * 50;
+		        			var material = new THREE.MeshBasicMaterial({color:0xff0000, wireframe: true});
+		        			var mesh = new THREE.Mesh(geometry, material);
+		        			mesh.position.x = boardObj.position.x * 50;
+		        			mesh.position.z = boardObj.position.y * 50;
 		        			
 							
 
 		        			//mesh.matrixAutoUpdate = false;
-		        			/*
+		        			
 		        			if (heading == "up") {
-		        				mesh.rotation.y = Math.PI * 1;
+		        				mesh.rotation.y = Math.PI * 1/2;
 
 		        			} else if (heading == "right") {
 		        				mesh.rotation.y = Math.PI * 0;
 
 		        			} else if (heading == "down") {
-		        				mesh.rotation.y = Math.PI * 3;
+		        				mesh.rotation.y = Math.PI * 3/2;
 
 		        			} else if (heading == "left") {
-		        				mesh.rotation.y = Math.PI * 2;
+		        				mesh.rotation.y = Math.PI * 1;
 
 		        			}
+		        			
+		        			scene.add(mesh)
+		        			shipToThree[boardObj.shipId] = mesh
 		        			*/
-		        			//scene.add(mesh)
 		        		} else {
 		        			alert('wat');
 		        		}
@@ -163,14 +171,17 @@
 			//displayShots(shots);
 			//displayDestruction(secondDestroyed);
 			board = newBoard;
+			requestAnimationFrame(animate)
 		}
 
 		var displayTurnsAndMoves = function (turns, moves) {
+			
 			for (i in turns) {
 				console.log('TURNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 				var ship = turns[i].ship;
 				var shipId = ship.shipId;
 				var facing = turns[i].direction;
+				console.log(facing);
 				//var oldFacing = board[ship.position.x][ship.position.y].facing;
 				var turn = null;
 				var dirToDeg = {
@@ -181,28 +192,37 @@
 				}
 
 				var relRot = {
-					'right': 90,
-					'left' : -90
+					'right': -90,
+					'left' : 90
 				}
 				//var degree = dirToDeg[facing] - dirToDeg[oldFacing]
 				var degree = relRot[facing]
-				paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
+				shipToThree[shipId].rotation.y += degree * Math.PI / 180;
+				//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
 				//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
 			}
 			console.log('displayingMoves');
+			
 			for (i in moves) {
 				console.log('translation')
 				var ship = moves[i].ship;
 				var shipId = ship.shipId;
 				var distance = moves[i].distance;
+				shipToThree[shipId].translateX(distance*50);
 				//paper.getById(shipRaphaelHash[shipId]).transform("r180");
-				paper.getById(shipRaphaelHash[shipId]).transform("...t0,-"+distance*50);
+				//paper.getById(shipRaphaelHash[shipId]).transform("...t0,-"+distance*50);
 				//paper.getById(shipRaphaelHash[shipId]).animate({transform: "...t"+distance*50})
 			}
+			//requestAnimationFrame(animate)
 		}
 
 		var testRotate = function () {
 			shipToThree[1].rotation.y += 3.14/4
+			requestAnimationFrame(animate);
+		}
+
+		var testTranslate = function () {
+			shipToThree[3].translateZ(50);
 			requestAnimationFrame(animate);
 		}
 
@@ -239,6 +259,7 @@
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
 						<button onclick="testRotate()">TEST ROTATE!!!</button>
+						<button onclick="testTranslate()">TEST TRANSLATE!!!</button>
 					</div>
 				</div>
 

@@ -78,7 +78,7 @@ server.post('/start', function (req, res) {
 		}
 		res.send(ret);
 		//start the timer for both players
-		t = setTimeout(update,500)
+		t = setTimeout(update,2000)
 		
 	} else {
 		console.log("??????????");
