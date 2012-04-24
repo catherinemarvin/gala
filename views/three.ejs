@@ -216,6 +216,59 @@
 			//requestAnimationFrame(animate)
 		}
 
+		var displayShots = function (shots) {
+			console.log("display shooting");
+			for (i in shots) {
+				var ship = shots[i].ship;
+				var shipId = ship.shipId;
+				var shipX = ship.position.x;
+				var shipY = ship.position.y;
+				var bulletX = shots[i].finalDest.x;
+				var bulletY = shots[i].finalDest.y;
+
+				if ((shipX !== bulletX) && (shipY !== bulletY)) {
+					console.log("something terrible has happened :(");
+					break;
+				}
+
+				if (shipY === bulletY) {
+					console.log("ships have same Y");
+					if (shipX > bulletX) {
+						for (var i = bulletX; i < shipX; i++) {
+							drawBullet(i,bulletY);
+							
+						}
+					} else if (shipX < bulletX) {
+						for (var i = shipX+1; i <= bulletX; i++) {
+							drawBullet(i,bulletY);
+					
+						}
+					}
+				} else if (shipX === bulletX) {
+					if (shipY > bulletY) {
+						for (var i = bulletY; i < shipY; i++) {
+							drawBullet(bulletX,i);
+							
+						}
+					} else if (shipY < bulletY) {
+						for (var i = shipY+1; i <= bulletY; i++) {
+							drawBullet(bulletX,i);
+							
+						}
+					}
+				}
+			}
+		}
+
+		var drawBullet = function (x,y) {
+			console.log("X: "+x);
+			console.log("Y: "+y);
+			//var newShip = paper.triangle(xPos*50+25,yPos*50+10,30);
+			var bullet = paper.circle(x*50+25,y*50+25,10);
+			bullet.attr({fill:"black"});
+			bulletLocations.push(bullet);
+		}
+
 		var testRotate = function () {
 			shipToThree[1].rotation.y += 3.14/4
 			requestAnimationFrame(animate);
@@ -224,6 +277,10 @@
 		var testTranslate = function () {
 			shipToThree[3].translateZ(50);
 			requestAnimationFrame(animate);
+		}
+
+		var testShooting = function () {
+
 		}
 
 
@@ -260,6 +317,7 @@
 						<p>Do a loop: ask for the board state and then display it.</p>
 						<button onclick="testRotate()">TEST ROTATE!!!</button>
 						<button onclick="testTranslate()">TEST TRANSLATE!!!</button>
+						<button onclick="testShooting()">TEST SHOOTING!!!</button>
 					</div>
 				</div>
 
