@@ -157,7 +157,7 @@
     	var updateBoard = function (data) {
 			console.log('updating!');
 			console.log(data)
-			//clearBullets()
+			clearBullets()
 			var newBoard = data.board;
 			var turns = data.turns;
 			var moves = data.moves;
@@ -167,9 +167,9 @@
 
 			//verifyBoard(newBoard);
 			displayTurnsAndMoves(turns,moves)
-			//displayDestruction(firstDestroyed);
-			//displayShots(shots);
-			//displayDestruction(secondDestroyed);
+			displayDestruction(firstDestroyed);
+			displayShots(shots);
+			displayDestruction(secondDestroyed);
 			board = newBoard;
 			requestAnimationFrame(animate)
 		}
@@ -258,15 +258,51 @@
 					}
 				}
 			}
+			requestAnimationFrame(animate)
 		}
+
+		var bulletLocations = [];
 
 		var drawBullet = function (x,y) {
 			console.log("X: "+x);
 			console.log("Y: "+y);
 			//var newShip = paper.triangle(xPos*50+25,yPos*50+10,30);
-			var bullet = paper.circle(x*50+25,y*50+25,10);
-			bullet.attr({fill:"black"});
+			var bullet = new THREE.Mesh(
+				new THREE.SphereGeometry(
+					10),
+				new THREE.MeshLambertMaterial({
+					color: 0xCC0000
+				}));
+			//var bullet = paper.circle(x*50+25,y*50+25,10);
+			//bullet.attr({fill:"black"});
+			bullet.position.x = x * 50
+			bullet.position.z = y * 50
+			scene.add(bullet);
+
 			bulletLocations.push(bullet);
+		}
+
+		var clearBullets = function () {
+			console.log("clearing bullets");
+			for (i in bulletLocations) {
+				//bulletLocations[i].remove();
+				scene.remove(bulletLocations[i]);
+			}
+			bulletLocations = [];
+			requestAnimationFrame(animate)
+		}
+
+		var displayDestruction = function (destroyed) {
+			console.log("destroying");
+			console.log(destroyed)
+			for (i in destroyed) {
+				//var ship = destroyed[i].ship;
+				//var shipId = ship.shipId;
+				var shipId = destroyed[i].shipId
+				//paper.getById(shipRaphaelHash[shipId]).remove();
+				scene.remove(shipToThree[shipId])
+			}
+			requestAnimationFrame(animate)
 		}
 
 		var testRotate = function () {
@@ -280,7 +316,29 @@
 		}
 
 		var testShooting = function () {
+			console.log("pew pew")
+			var shots = []
+			/*var ship = shots[i].ship;
+				var shipId = ship.shipId;
+				var shipX = ship.position.x;
+				var shipY = ship.position.y;
+				var bulletX = shots[i].finalDest.x;
+				var bulletY = shots[i].finalDest.y;*/
+			shots.push({ship: {shipId: 3, position:{x:9,y:8}}, finalDest: {x:7,y:8}});
+			displayShots(shots);
+		}
 
+		var testDestruction = function () {
+			console.log("kaboom")
+			var destroyed = []
+			/*var ship = shots[i].ship;
+				var shipId = ship.shipId;
+				var shipX = ship.position.x;
+				var shipY = ship.position.y;
+				var bulletX = shots[i].finalDest.x;
+				var bulletY = shots[i].finalDest.y;*/
+			destroyed.push({ship: {shipId: 3, position:{x:9,y:8}}, finalDest: {x:7,y:8}});
+			displayDestruction(destroyed);
 		}
 
 
@@ -315,9 +373,13 @@
 				<div class="row">
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
+						<!--
 						<button onclick="testRotate()">TEST ROTATE!!!</button>
 						<button onclick="testTranslate()">TEST TRANSLATE!!!</button>
 						<button onclick="testShooting()">TEST SHOOTING!!!</button>
+						<button onclick="clearBullets()">CLEAR BULLETS!!!</button>
+					-->
+					</div>
 					</div>
 				</div>
 
