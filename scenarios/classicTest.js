@@ -32,7 +32,4 @@ var Scenario = function () {
 
   return this;
 
-
-}
-
 module.exports.Scenario = Scenario
