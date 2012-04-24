@@ -7,8 +7,6 @@ var Closure = function(body, args, env){
 var Exec = function(stmts){
   var evalExp = function(e, env){
     var lookup = function(name, env){
-      //console.log(name)
-      //console.log(env)
       if (!(env[name] == undefined)){
          return env[name]
       }
@@ -16,6 +14,8 @@ var Exec = function(stmts){
          return lookup(name, env['__up__'])
       }
       else{
+         console.log("couldn't find")
+         console.log(name)
          console.log("Interpreter Error")
       }
     }
@@ -139,8 +139,8 @@ var Exec = function(stmts){
 
   var evalStmt = function(stmts, env){
     var update = function(name, env, val){
-      if (!(env['name'] == undefined)){
-        env['name'] = val
+      if (!(env[name] == undefined)){
+        env[name] = val
       }
       else if (env["__up__"] != undefined){
         update(name, env["__up__"] , val)
