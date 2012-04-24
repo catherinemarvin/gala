@@ -49,6 +49,25 @@
 			}
 			init();
 			//animate();
+			$(document).keypress(function (e) {
+				console.log("pressed")
+				console.log(e.keyCode);
+				//w = 119
+				//a = 97
+				//s = 115
+				//d = 100
+				var code = e.keyCode;
+				if (code == 119) {
+					camera.position.z -= 10
+				} else if (code == 97) {
+					camera.position.x -= 10
+				} else if (code == 115) {
+					camera.position.z += 10
+				} else if (code == 100) {
+					camera.position.x += 10
+				}
+				requestAnimationFrame(animate)
+			})
 		});
 
 		var loadSpaceShip = function (boardObj) {
@@ -341,6 +360,11 @@
 			displayDestruction(destroyed);
 		}
 
+		var testCamera = function () {
+			camera.position.x += 5
+			requestAnimationFrame(animate)
+		}
+
 
 		var animate = function () {
 			//requestAnimationFrame(animate);
@@ -373,6 +397,7 @@
 				<div class="row">
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
+						<button onclick="testCamera()">TEST CAMERA!!!</button>
 						<!--
 						<button onclick="testRotate()">TEST ROTATE!!!</button>
 						<button onclick="testTranslate()">TEST TRANSLATE!!!</button>
