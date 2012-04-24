@@ -30,7 +30,7 @@ var Scenario = function () {
   this.board[9][9] = rightShip1;
   this.board[9][8] = rightShip2;
 
-
+  return this
 }
 
 module.exports.Scenario = Scenario
