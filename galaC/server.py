@@ -26,7 +26,7 @@ class buildAst:
     callback = i.jsoncallback
     print callback
     print code
-    parser = parser_generator.makeParser(grammar_parser.parse(open('./galaC.grm').read()))
+    parser = parser_generator.makeParser(grammar_parser.parse(open('./tst.grm').read()))
     ast = parser.parse(code)
     desugaredE = bytecode_compiler.desugar(ast)
     web.header('Content-Type', 'application/javascript') 

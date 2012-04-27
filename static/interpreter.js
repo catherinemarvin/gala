@@ -1,7 +1,8 @@
-var Closure = function(body, args, env){
+var Closure = function(body, args, env, recurse){
   this.body = body
   this.args = args
   this.env = env
+  this.recurse = recurse
 }
 var serverUrl = "/start"
 var updateUrl = "/order"
@@ -160,11 +161,16 @@ var Exec = function(stmts){
       return doCall(evalExp(e[1], env), env, varlist)
       
     }
-    if (e[0] == 'lambda'){
+    if (e[0] === 'update'){
+      var c = new Closure(e[2], e[1], env)
+      var retClosure = new Closure(e[2], e[1], env, true)
+      return retClosure
+    }
+    if (e[0] === 'lambda'){
       var c = new Closure(e[2], e[1], env)
       return c
     }
-    if (e[0] == 'ite'){
+    if (e[0] === 'ite'){
        if ( !evalExp(e[1], env) ){
          return evalExp(e[3], env)
        }
@@ -228,6 +234,9 @@ var Exec = function(stmts){
       arg = closure.args[i]
       frame[arg] = varList[i]
       i = i+1
+    }
+    if (closure.recurse === true){
+       setTimeout( function () {doCall(closure, env, varList)} , 500)
     }
     return evalStmt(closure.body, frame)
   }

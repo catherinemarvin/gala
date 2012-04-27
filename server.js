@@ -152,7 +152,7 @@ var update = function () {
         }
 	console.log("sent right ret")
 	everyone.now.pushChanges();
-	t = setTimeout(update,500)
+	t = setTimeout(update,1000)
 }
 
 everyone.now.pushChanges = function () {
