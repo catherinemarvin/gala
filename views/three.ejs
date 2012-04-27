@@ -154,9 +154,10 @@
 				scene = new THREE.Scene();
 
 		        camera = new THREE.PerspectiveCamera( 90, 1, 1, 10000 );
-		        camera.position.y = 500;
-		        camera.position.z = 1200;
-		        camera.lookAt(new THREE.Vector3(0,0,0))
+		        camera.position.x = 200;
+		        camera.position.y = 300;
+		        camera.position.z = 700;
+		        camera.lookAt(new THREE.Vector3(200,0,0))
 		        scene.add( camera );
 
 		        for (var i = 0; i <= maxX; i++) {
@@ -210,7 +211,7 @@
 
 		        renderer = new THREE.CanvasRenderer();
 		        renderer.setClearColorHex(0x000000);
-		        renderer.setSize( 500, 500 );
+		        renderer.setSize( 700, 700 );
 		        renderer.domElement.id = "gameBoardCanvas"
 
 		        document.getElementById("gameBoardDiv").appendChild( renderer.domElement );
@@ -593,12 +594,12 @@
 				
 
 				<div class="row">
-					<div class="span6" id="gameBoardDiv">
+					<div class="span10" id="gameBoardDiv">
 					</div>
-					<div class="span6">
+					<div class="span2">
 						<h2>Controls</h2>
-						<p>w|a: Move Forward/Backward
-							<br>s|d: Strafe Left/Right
+						<p>w|s: Move Forward/Backward
+							<br>a|d: Strafe Left/Right
 							<br>o|p: Move Up/Down
 							<br>[|]: Look Down/Up
 							<br>;|': Look Left/Right
@@ -607,8 +608,12 @@
 						<hr>
 						<p>
 							<button class="btn btn-primary" id="trackButton" onclick="enableTracking()">Track a ship</button>
-		
-							<button class="btn btn-info" id="switchButton" onclick="switchTracking()">Change tracking ship</button>				<button class="btn btn-inverse" id="untrackButton" onclick="stopTracking()">Stop tracking</button>
+						</p>
+						<p>
+							<button class="btn btn-info" id="switchButton" onclick="switchTracking()">Change tracking ship</button>	
+						</p>	
+						<p>
+							<button class="btn btn-inverse" id="untrackButton" onclick="stopTracking()">Stop tracking</button>
 						</p>
 					</div>
 				</div>
