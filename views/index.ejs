@@ -21,11 +21,11 @@
 				console.log("ready and waiting");
 
 				$("#tacticalButton").click(function () {
-					window.location = "/raphael";
+					window.open("/raphael");
 				});
 
 				$("#cinematicButton").click(function () {
-					window.location = "/three";
+					window.open("/three");
 				});
 
 			});
@@ -49,13 +49,21 @@
 
 
 				<div class="row">
-					<div class="span12">
+					<div class="span6">
 						<h3>Welcome, Commander!</h3>
 						<br>
-						<p>We're still setting your command station up, so excuse how bare everything is. In the meantime though, please take a look around!</p>
+						<p>We're still setting your command station up, so excuse how bare everything is. In the meantime though, please take a look around! Input your orders to the right, and then view your cunning strategems by clicking below.</p>
 						<p><button class="btn" id="tacticalButton">Tactical View</button></p>
 						<p><button class="btn btn-inverse" id="cinematicButton">Cinematic View</button></p>
 					</div>
+					<div class="span6" id="ordersDiv">
+							<textarea cols="40" rows="20" id="ordersForm" placeholder="Code goes in here!"></textarea>
+							<br><button id="submitOrders" class="btn btn-primary">SUBMIT</button>	
+					</div>
+				</div>
+
+				<div class="row">
+					
 				</div>
 
 				<hr>
