@@ -20,6 +20,7 @@
 
 		<script>
 
+		var shipObjs = [];
 		var tracking = false;
 		var trackedShipId = null;
 		var isTurning = false;
@@ -167,6 +168,7 @@
 		        		} else if (boardObj.type == "Ship") {
 
 		        			//var heading = boardObj.facing
+		        			shipObjs.push(boardObj);
 
 		        			loadSpaceShip(boardObj)
 
@@ -431,14 +433,15 @@
 			console.log("TRACKING: ONLINE");
 			//for now always track shipId: 3
 			//todo: implement a way to shuffle around ships or even pick a ship to track!!!
-			var ship = shipToThree[3];
+			trackedShipId = 0;
+			var ship = shipToThree[trackedShipId];
 			var shipPos = ship.position;
 			var shipX = shipPos.x;
 			var shipY = shipPos.y;
 			var shipZ = shipPos.z;
 			var facing = board[shipX/50][shipZ/50].facing;
 			tracking = true;
-			trackedShipId = 3;
+			
 
 			var arg = {
 				facing: facing,
@@ -446,8 +449,35 @@
 				rotation: ship.rotation
 			}
 
+			$("#trackButton").addClass("active")
+
 			adjustCameraToShip(arg);
 
+		}
+
+		var switchTracking = function () {
+			var currentIndex = null;
+			for (var i = 0; i < shipObjs.length; i++) {
+				if (shipObjs[i].shipId === trackedShipId) {
+					currentIndex = i;
+				}
+			}
+
+			if (currentIndex === shipObjs.length - 1) {
+				currentIndex = -1;
+			}
+
+			var newShipObj = shipObjs[currentIndex+1];
+
+			var shipInThree = shipToThree[newShipObj.shipId]
+
+			var arg = {
+				facing: newShipObj.facing,
+				position: shipInThree.position,
+				rotation: shipInThree.rotation
+			}
+			trackedShipId = newShipObj.shipId
+			adjustCameraToShip(arg);
 		}
 		/*
 		adjusting camera expects:
@@ -563,7 +593,9 @@
 						</p>
 						<hr>
 						<p>
-							<button class="btn btn-primary" onclick="enableTracking()">Track a ship</button>
+							<button class="btn btn-primary" id="trackButton" onclick="enableTracking()">Track a ship</button>
+							<button class="btn btn-primary" id="switchButton" onclick="switchTracking()">Change tracking ship</button>
+						</p>
 					</div>
 				</div>
 
