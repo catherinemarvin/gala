@@ -22,24 +22,14 @@
 				console.log("ready and waiting");
 
 				$("#tacticalButton").click(function () {
-					window.open("/raphael");
+					//window.open("/raphael");
+					window.location = "/raphael";
 				});
 
 				$("#cinematicButton").click(function () {
-					window.open("/three");
+					//window.open("/three");
+					window.location = "/three";
 				});
-
-				$("#submitOrders").click(function () {
-					var orders = $("#ordersForm").val();
-					$.getJSON("http://www.writebetterwith.us:8080?jsoncallback=?",
-                                          {  
-                                            code: orders
-                                          },
-                                          function(data) {
-                                            Exec(data)
-                                          })
-					console.log('clicky')	
-				})
 
 			});
 
@@ -50,7 +40,7 @@
 		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
-					<a class="brand" href="#">Gala</a>
+					<a class="brand" href="/">Gala</a>
 				</div>
 			</div>
 		</div>
@@ -62,7 +52,7 @@
 
 
 				<div class="row">
-					<div class="span6">
+					<div class="span12">
 						<h3>Welcome, Commander!</h3>
 						<br>
 						<p>We're still setting your command station up, so excuse how bare everything is. In the meantime though, please take a look around!</p>
@@ -78,7 +68,11 @@
 
 				<hr>
 				<footer>
+					<ul class="breadcrumb">
+						<li class="active"><a href="#">Home</a></li>
+					</ul>
 					<p>&copy; Ajay Tripathy & Kevin Hwang 2012</p>
+
 				</footer>
 			</div>
 		</div>
