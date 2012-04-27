@@ -320,39 +320,29 @@
 		</div>
 		<div id="content">
 			<div class="hero">
-				<h1>RAPHAEL!!!</h1>
+				<h1>Tactical View</h1>
+				<br>
+				<p>Command your robots using this tactical grid. Simply dictate your orders with the interface on the right, and then watch the battle unfold!</p>
 			</div>
 			<div class="container">
 
 
 				<div class="row">
-					<div class="span12">
-						<p>Do a loop: ask for the board state and then display it.</p>
-						<button onclick="fireShot()">TEST SHOOTING ANIMATION</button>
-						<button onclick="clearBullets()">CLEAR BULLETS</button>
+					<div class="span6" id="gameBoardDiv">
 					</div>
-				</div>
 
-				<div class="row">
-					<div class="span12" id="gameBoardDiv">
+					<div class="span6" id="ordersDiv">
+						<textarea cols="40" rows="25" id="ordersForm" placeholder="Code goes in here!"></textarea>
 					</div>
+
+					<div class="span6" id="ordersDiv">
+						<button id="submitOrders" class="btn btn-primary">SUBMIT</button>
+					</div>
+
+
 				</div>
 
 				<br>
-
-				<div class="row">
-					<div class="span12" id="ordersDiv">
-						<textarea id="ordersForm"></textarea>
-					</div>
-
-				</div>
-
-				<div class="row">
-					<div class="span12" id="ordersDiv">
-						<button id="submitOrders" class="btn">SUBMIT</button>
-					</div>
-
-				</div>
 
 
 
