@@ -94,7 +94,18 @@
 
 		var loadSpaceShip = function (boardObj) {
 			var loader = new THREE.JSONLoader();
-			var material = new THREE.MeshBasicMaterial({color:0xff0000, wireframe: true});
+			var playerId = boardObj.playerId;
+
+			var meshArgs = null;
+
+			if (playerId === "playerLeft") {
+				meshArgs = {color: 0xff0000, wireframe: true};
+			} else {
+				meshArgs = {color: 0x0000ff, wireframe: true};
+			}
+
+			var material = new THREE.MeshBasicMaterial(meshArgs);
+			
 			loader.load('/static/ship.js', function (geometry) {
 				console.log("loadan")
 				var mesh = new THREE.Mesh(geometry, material);
@@ -118,6 +129,8 @@
     				mesh.rotation.y = Math.PI * 1;
 
     			}
+
+
 				//remove this later and just cycle eventually. it makes everything very slow D:
 				requestAnimationFrame(animate);
 			});
