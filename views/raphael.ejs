@@ -46,6 +46,12 @@
 					}
 				});
 
+				$("#submitOrders").click(function () {
+					var orders = $("#ordersForm").val();
+					console.log(orders)
+					console.log('clicky')	
+				})
+
 
 
 
@@ -321,6 +327,24 @@
 					<div class="span12" id="gameBoardDiv">
 					</div>
 				</div>
+
+				<br>
+
+				<div class="row">
+					<div class="span12" id="ordersDiv">
+						<textarea id="ordersForm"></textarea>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="span12" id="ordersDiv">
+						<button id="submitOrders" class="btn">SUBMIT</button>
+					</div>
+
+				</div>
+
+
 
 				<hr>
 				<footer>
