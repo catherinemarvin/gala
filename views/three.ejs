@@ -18,6 +18,9 @@
 
 		<script>
 
+		var tracking = false;
+		var trackedShipId = null;
+
 
 		var camera, scene, renderer, geometry, material, mesh;
 
@@ -50,8 +53,8 @@
 			init();
 			//animate();
 			$(document).keypress(function (e) {
-				console.log("pressed")
-				console.log(e.keyCode);
+				//console.log("pressed")
+				//console.log(e.keyCode);
 				//w = 119
 				//a = 97
 				//s = 115
@@ -62,6 +65,8 @@
 				//] = 93
 				//; = 59
 				//' = 39
+				//. = 46
+				/// = 47
 				var code = e.keyCode;
 				if (code == 119) {
 					camera.translateZ(-10)
@@ -87,6 +92,10 @@
 				} else if (code == 39) {
 					//camera.target.position.x += 10
 					camera.rotation.y -= .1
+				} else if (code == 46) {
+					camera.rotation.z += .1
+				} else if (code == 47) {
+					camera.rotation.z -= .1
 				}
 				requestAnimationFrame(animate)
 			})
@@ -107,13 +116,11 @@
 			var material = new THREE.MeshBasicMaterial(meshArgs);
 			
 			loader.load('/static/ship.js', function (geometry) {
-				console.log("loadan")
 				var mesh = new THREE.Mesh(geometry, material);
 				mesh.position.x = boardObj.position.x * 50;
 				mesh.position.z = boardObj.position.y * 50;
 				mesh.scale.x = mesh.scale.y = mesh.scale.z = 10;
 				scene.add(mesh);
-				console.log(mesh)
 				shipToThree[boardObj.shipId] = mesh
 				var heading = boardObj.facing;
 				if (heading == "up") {
@@ -142,12 +149,11 @@
 
 				scene = new THREE.Scene();
 
-		        camera = new THREE.PerspectiveCamera( 75, 1, 1, 10000 );
+		        camera = new THREE.PerspectiveCamera( 90, 1, 1, 10000 );
 		        camera.position.y = 500;
 		        camera.position.z = 1200;
 		        camera.lookAt(new THREE.Vector3(0,0,0))
 		        scene.add( camera );
-		        console.log("get board state")
 
 		        for (var i = 0; i <= maxX; i++) {
 		        	for (var j = 0; j <= maxY; j++) {
@@ -156,8 +162,6 @@
 		        			//add nothing for now
 
 		        		} else if (boardObj.type == "Ship") {
-		        			console.log("SHIP")
-		        			console.log(boardObj.position);
 
 		        			//var heading = boardObj.facing
 
@@ -209,8 +213,6 @@
     	}
 
     	var updateBoard = function (data) {
-			console.log('updating!');
-			console.log(data)
 			clearBullets()
 			var newBoard = data.board;
 			var turns = data.turns;
@@ -231,11 +233,9 @@
 		var displayTurnsAndMoves = function (turns, moves) {
 			
 			for (i in turns) {
-				console.log('TURNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 				var ship = turns[i].ship;
 				var shipId = ship.shipId;
 				var facing = turns[i].direction;
-				console.log(facing);
 				//var oldFacing = board[ship.position.x][ship.position.y].facing;
 				var turn = null;
 				var dirToDeg = {
@@ -254,15 +254,51 @@
 				shipToThree[shipId].rotation.y += degree * Math.PI / 180;
 				//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
 				//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
+				if (tracking === true) {
+					if (shipId === trackedShipId) {
+						/*
+						adjusting camera expects:
+						{
+							facing: "right",
+							position: 3js position
+							rotation: 3js rotation
+						}
+						*/
+						var arg = {
+							facing: ship.facing,
+							position: shipToThree[shipId].position,
+							rotation: shipToThree[shipId].rotation
+						}
+
+						adjustCameraToShip(arg)
+					}
+				}
 			}
-			console.log('displayingMoves');
 			
 			for (i in moves) {
-				console.log('translation')
 				var ship = moves[i].ship;
 				var shipId = ship.shipId;
 				var distance = moves[i].distance;
 				shipToThree[shipId].translateX(distance*50);
+				if (tracking === true) {
+					if (shipId === trackedShipId) {
+						/*
+						adjusting camera expects:
+						{
+							facing: "right",
+							position: 3js position
+							rotation: 3js rotation
+						}
+						*/
+						var arg = {
+							facing: ship.facing,
+							position: shipToThree[shipId].position,
+							rotation: shipToThree[shipId].rotation
+						}
+
+						adjustCameraToShip(arg)
+					}
+				}
 				//paper.getById(shipRaphaelHash[shipId]).transform("r180");
 				//paper.getById(shipRaphaelHash[shipId]).transform("...t0,-"+distance*50);
 				//paper.getById(shipRaphaelHash[shipId]).animate({transform: "...t"+distance*50})
@@ -271,7 +307,6 @@
 		}
 
 		var displayShots = function (shots) {
-			console.log("display shooting");
 			for (i in shots) {
 				var ship = shots[i].ship;
 				var shipId = ship.shipId;
@@ -286,7 +321,6 @@
 				}
 
 				if (shipY === bulletY) {
-					console.log("ships have same Y");
 					if (shipX > bulletX) {
 						for (var i = bulletX; i < shipX; i++) {
 							drawBullet(i,bulletY);
@@ -318,8 +352,6 @@
 		var bulletLocations = [];
 
 		var drawBullet = function (x,y) {
-			console.log("X: "+x);
-			console.log("Y: "+y);
 			//var newShip = paper.triangle(xPos*50+25,yPos*50+10,30);
 			var bullet = new THREE.Mesh(
 				new THREE.SphereGeometry(
@@ -337,7 +369,6 @@
 		}
 
 		var clearBullets = function () {
-			console.log("clearing bullets");
 			for (i in bulletLocations) {
 				//bulletLocations[i].remove();
 				scene.remove(bulletLocations[i]);
@@ -347,8 +378,6 @@
 		}
 
 		var displayDestruction = function (destroyed) {
-			console.log("destroying");
-			console.log(destroyed)
 			for (i in destroyed) {
 				//var ship = destroyed[i].ship;
 				//var shipId = ship.shipId;
@@ -370,7 +399,6 @@
 		}
 
 		var testShooting = function () {
-			console.log("pew pew")
 			var shots = []
 			/*var ship = shots[i].ship;
 				var shipId = ship.shipId;
@@ -383,7 +411,6 @@
 		}
 
 		var testDestruction = function () {
-			console.log("kaboom")
 			var destroyed = []
 			/*var ship = shots[i].ship;
 				var shipId = ship.shipId;
@@ -395,8 +422,77 @@
 			displayDestruction(destroyed);
 		}
 
-		var testCamera = function () {
-			camera.position.x += 5
+		var enableTracking = function () {
+			console.log("TRACKING: ONLINE");
+			//for now always track shipId: 3
+			//todo: implement a way to shuffle around ships or even pick a ship to track!!!
+			var ship = shipToThree[3];
+			var shipPos = ship.position;
+			var shipX = shipPos.x;
+			var shipY = shipPos.y;
+			var shipZ = shipPos.z;
+			var facing = board[shipX/50][shipZ/50].facing;
+			tracking = true;
+			trackedShipId = 3;
+
+			var arg = {
+				facing: facing,
+				position: ship.position,
+				rotation: ship.rotation
+			}
+
+			adjustCameraToShip(arg);
+
+		}
+		/*
+		adjusting camera expects:
+		{
+			facing: "right",
+			position: {x: 1, y: 2, z: 3},
+			rotation: {x: 0, y: 0, z: 0}
+		}
+		*/
+		var adjustCameraToShip = function (json) {
+			console.log("adjusting")
+			
+			var facing = json.facing;
+			var position = json.position;
+			var xPos = position.x;
+			var yPos = position.y;
+			var zPos = position.z;
+			var rotation = json.rotation;
+			var xRot = rotation.x;
+			var yRot = rotation.y;
+			var zRot = rotation.z;
+
+			camera.rotation.x = rotation.x;
+			camera.rotation.z = rotation.z;
+			camera.rotation.y = rotation.y - Math.PI / 2;
+
+			camera.position.x = position.x;
+			camera.position.y = position.y+50;
+			camera.position.z = position.z;
+
+			console.log(facing)
+
+			if (facing === "up") {
+				//camera.translateZ(100);
+				camera.position.z += 100;
+			} else if (facing === "right") {
+				//camera.translateX(-100);
+				camera.position.x -= 100;
+			} else if (facing === "down") {
+				//camera.translateZ(-100);
+				camera.position.z -= 100;
+			} else if (facing === "left") {
+				//camera.translateX(100);
+				camera.position.x += 100;
+			} else {
+				console.log("hue");
+			}
+
+			//camera.lookAt(position)
+
 			requestAnimationFrame(animate)
 		}
 
@@ -432,7 +528,7 @@
 				<div class="row">
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
-						<button onclick="testCamera()">TEST CAMERA!!!</button>
+						<button onclick="enableTracking()">TRACKING: ON!!!</button>
 						<!--
 						<button onclick="testRotate()">TEST ROTATE!!!</button>
 						<button onclick="testTranslate()">TEST TRANSLATE!!!</button>
