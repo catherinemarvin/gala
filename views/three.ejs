@@ -455,6 +455,17 @@
 
 		}
 
+		var stopTracking = function () {
+			$("#trackButton").removeClass("active");
+			camera.position.x = 0;
+			camera.position.y = 500;
+		    camera.position.z = 1200;
+		    camera.lookAt(new THREE.Vector3(0,0,0));
+		    tracking = false;
+		    requestAnimationFrame(animate)
+
+		}
+
 		var switchTracking = function () {
 			var currentIndex = null;
 			for (var i = 0; i < shipObjs.length; i++) {
@@ -594,7 +605,8 @@
 						<hr>
 						<p>
 							<button class="btn btn-primary" id="trackButton" onclick="enableTracking()">Track a ship</button>
-							<button class="btn btn-primary" id="switchButton" onclick="switchTracking()">Change tracking ship</button>
+		
+							<button class="btn btn-info" id="switchButton" onclick="switchTracking()">Change tracking ship</button>				<button class="btn btn-inverse" id="untrackButton" onclick="stopTracking()">Stop tracking</button>
 						</p>
 					</div>
 				</div>
