@@ -25,6 +25,18 @@ var Exec = function(stmts){
     if (e[0] === 'exp'){
       return evalExp(e[1], env)
     }
+    if (e[0] === 'move'){
+      console.log('moving')
+    }
+    if (e[0] === 'turn'){
+      console.log('turning')
+    }
+    if (e[0] === 'shoot'){
+      console.log('shooting')
+    }
+    if (e === 'executeOrders'){
+      console.log('executingOrder')
+    }
     if (e[0] === 'int-lit'){
       return e[1]
     }
@@ -155,6 +167,8 @@ var Exec = function(stmts){
           val = evalExp(s[1], env)
       }
       else if (s[0] === 'def'){
+          console.log('DEFINING MOMENT')
+          console.log(s[2])
           val = evalExp(s[2], env)
           env[s[1]] = val
           //console.log('DONE PUTTING IN ENVIRONMENT')
@@ -184,8 +198,6 @@ var Exec = function(stmts){
   }
 
   var doCall = function(closure, env, varList){
-    console.log('DOING DOCALLL')
-    console.log(closure)
     var closureFrame = closure.env
     var frame = {'__up__' : closureFrame}
     var i = 0
