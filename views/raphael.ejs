@@ -10,7 +10,6 @@
 		<link href="/static/raphael.css" rel="stylesheet">
 		<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 		<script src="/nowjs/now.js"></script>
-                <script src="/static/interpreter.js"></script>
 
 		<!--HTML5 shim, for IE6-8 support of HTML5 elements. Does it actually work? No clue, but here's to hoping it does!-->
 
@@ -20,7 +19,7 @@
 
 		<script src="/static/raphael-min.js"></script>
 		<script>
-			//this should realy come with Raphael but it doesn't.
+			//this should really come with Raphael but it doesn't.
 			Raphael.fn.triangle = function (x, y, size) {
 				var path = ["M",x,y];
 				path = path.concat(["L", (x + size/2), (y+size)]);
@@ -50,17 +49,7 @@
 					}
 				});
 
-				$("#submitOrders").click(function () {
-					var orders = $("#ordersForm").val();
-					$.getJSON("http://www.writebetterwith.us:8080?jsoncallback=?",
-                                          {  
-                                            code: orders
-                                          },
-                                          function(data) {
-                                            Exec(data)
-                                          })
-					console.log('clicky')	
-				})
+				
 
 
 
