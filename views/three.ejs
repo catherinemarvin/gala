@@ -160,6 +160,36 @@
 		        camera.lookAt(new THREE.Vector3(200,0,0))
 		        scene.add( camera );
 
+		        //sprinkle stage with stars
+
+		       for (var i = 0; i < 1; i++) {
+		       		
+			       	//var texture = THREE.ImageUtils.loadTexture('static/earth.jpg');
+
+
+			        var starMaterial = new THREE.MeshBasicMaterial({
+			        	map: texture,
+			        	//color: 0xFFFFFF
+			        });
+
+			        var starGeometry = new THREE.SphereGeometry(50);
+		       		var star = new THREE.Mesh(starGeometry, starMaterial)
+		       		star.position.x = -100;
+		       		star.position.y = -200
+		       		star.position.z = -100;
+
+		       		var pointLight = new THREE.PointLight(0xFFFFFF)
+
+		       		pointLight.lookAt(star.position)
+		       		scene.add(pointLight)
+		       		
+		       		scene.add(star)
+		       		requestAnimationFrame(animate)
+
+		       }
+
+
+
 		        for (var i = 0; i <= maxX; i++) {
 		        	for (var j = 0; j <= maxY; j++) {
 		        		var boardObj = data[i][j];
