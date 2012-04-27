@@ -20,10 +20,12 @@ class testBuildAst:
     return json.dumps(desugaredE)
 
 class buildAst:
-  def POST(self):
+  def GET(self):
     i = web.input()
     code = i.code
-    callback = i.callback
+    callback = i.jsoncallback
+    print callback
+    print code
     parser = parser_generator.makeParser(grammar_parser.parse(open('./galaC.grm').read()))
     ast = parser.parse(code)
     desugaredE = bytecode_compiler.desugar(ast)

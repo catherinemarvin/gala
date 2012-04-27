@@ -1,5 +1,4 @@
 while(1==1){
-  move(1, {distance = 1})
-  turn(1, {direction = 'left'})
+  move(1, 1)
   def x = executeOrders()
 }

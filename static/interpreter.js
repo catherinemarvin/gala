@@ -3,8 +3,25 @@ var Closure = function(body, args, env){
   this.args = args
   this.env = env
 }
+var serverUrl = "/start"
+var updateUrl = "/order"
 
 var Exec = function(stmts){
+  var info = {}
+  console.log("Here's jQuery")
+  console.log(jQuery)
+  jQuery.ajax({
+         type: "POST",
+         data: {},
+         url:    serverUrl,
+         success: function(result) {
+                     info = result
+                  },
+         async:   false
+    });
+  var playerId = info['id']
+  var ordersToPost = {'id': playerId, 'orders': []}      
+     
   var evalExp = function(e, env){
     var lookup = function(name, env){
       if (!(env[name] == undefined)){
@@ -26,7 +43,7 @@ var Exec = function(stmts){
       return evalExp(e[1], env)
     }
     if (e[0] === 'move'){
-      console.log('moving')
+      ordersToPost['orders'].push({ 'shipName': e[1], 'action': 'move' , 'actArgs': {'distance': e[2] }})
     }
     if (e[0] === 'turn'){
       console.log('turning')
@@ -34,8 +51,22 @@ var Exec = function(stmts){
     if (e[0] === 'shoot'){
       console.log('shooting')
     }
-    if (e === 'executeOrders'){
-      console.log('executingOrder')
+    if (e === 'executeOrders' || e[0] === 'executeOrders'){
+      var gameState = {}
+      var orderString = JSON.stringify(ordersToPost['orders'])
+      jQuery.ajax({
+         type: "POST",
+         url: updateUrl,
+         data: {id : ordersToPost['id'], orders: orderString},
+         success: function(result) {
+                     console.log('got response from server')
+                     gameState = result
+                  },
+         async:   false
+      });
+      console.log('order sent, updating gameState')
+      ordersToPost['orders'] = []
+      return gameState
     }
     if (e[0] === 'int-lit'){
       return e[1]
@@ -53,13 +84,7 @@ var Exec = function(stmts){
       var dict = evalExp(e[1], env)
       var index = evalExp(e[2], env)
       var value = evalExp(e[3], env)
-      console.log('PUTTING STUFF IN')
-      console.log(dict)
-      console.log(index)
-      console.log(value)
       dict[index] = value 
-      console.log('ASSIGNMENT')
-      console.log(dict[index])
     }
     if (e[0] === 'get'){
       var dict = evalExp(e[1], env)
@@ -167,8 +192,6 @@ var Exec = function(stmts){
           val = evalExp(s[1], env)
       }
       else if (s[0] === 'def'){
-          console.log('DEFINING MOMENT')
-          console.log(s[2])
           val = evalExp(s[2], env)
           env[s[1]] = val
           //console.log('DONE PUTTING IN ENVIRONMENT')
@@ -211,4 +234,3 @@ var Exec = function(stmts){
   return evalStmt(stmts, { "__up__": null})
 }
 
-module.exports.Exec = Exec

@@ -36,7 +36,6 @@ server.get('/three', function (req, res) {
 });
 
 server.post('/test', function (req, res) {
-	console.log("POSTED TO TEST");
 	res.send(req.body);
 });
 
@@ -54,7 +53,6 @@ var t = null
 server.post('/start', function (req, res) {
 	if (players.playerLeft == null) {
 		players.playerLeft = "playerLeft"
-
 		var ret = {
 			id: 'playerLeft',
 			gameState: {
@@ -77,7 +75,6 @@ server.post('/start', function (req, res) {
 			}
 		}
 		res.send(ret);
-		//start the timer for both players
 		t = setTimeout(update,2000)
 		
 	} else {
@@ -92,12 +89,12 @@ server.post('/order', function (req, res) {
 	var orders = req.body;
 	orders.orders = JSON.parse(orders.orders)
 	var player = orders.id
+      
 	if (player === players.playerLeft && leftOrderQueue.length == 0) {
 		leftOrderQueue.push(orders);
 		//res.send('ok');
 
 	} else if (player === players.playerRight && rightOrderQueue.length == 0) {
-		//console.log(orders);
 		rightOrderQueue.push(orders)
 		//res.send('ok');
 	} else {
@@ -111,8 +108,6 @@ server.post('/order', function (req, res) {
 });
 
 server.post("/getBoardState", function (req, res) {
-	//console.log("GETTING BOARD STATE");
-	//console.log(board)
 	res.send(board)
 });
 
@@ -126,15 +121,8 @@ var update = function () {
 		console.log("don't have all the orders");
 	}
 	console.log("updating!");
-	console.log(changes)
-	//clearTimeout(t);
-	//console.log(leftOrderQueue);
-	//console.log(rightOrderQueue);
 	var leftOrders = leftOrderQueue.shift();
 	var rightOrders = rightOrderQueue.shift();
-	//console.log("orders should be empty now");
-	//console.log(leftOrderQueue);
-	//console.log(rightOrderQueue);
 	executeOrders(leftOrders, rightOrders);
 	
 	var leftRet = {
@@ -145,9 +133,11 @@ var update = function () {
 			visibleEnemyShips: playerRightShips
 		}
 	}
-	//console.log("~~~~~~~~~~");
-	//console.log(responseStreams)
-	responseStreams[players.playerLeft].send(leftRet);
+        try{   
+	  responseStreams[players.playerLeft].send(leftRet);
+        }
+        catch(e){
+        }
 	console.log("sent left ret");
 	
 	var rightRet = {
@@ -158,7 +148,11 @@ var update = function () {
 			visibleEnemyShips: playerLeftShips
 		}
 	}
-	responseStreams[players.playerRight].send(rightRet);
+        try{
+          responseStreams[players.playerRight].send(rightRet);
+        }
+        catch(e){
+        }
 	console.log("sent right ret")
 	everyone.now.pushChanges();
 	t = setTimeout(update,500)
@@ -173,7 +167,6 @@ everyone.now.pushChanges = function () {
 }
 
 var executeOrders = function (leftOrders, rightOrders) {
-	console.log("executing orders")
 	console.log(leftOrders);
 	console.log(rightOrders);
         var destroyedShips = [] 
@@ -254,7 +247,6 @@ var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPo
           shipHasExecutedOrder[shipId] = true
           bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, changes)
           changes.shots.push({'ship': ship , 'finalDest' : bulletDest})
-          console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
           console.log(changes)
        }
      }
@@ -267,7 +259,6 @@ var executeShooting = function (leftOrders, rightOrders, allDest, allShipStartPo
          shipHasExecutedOrder[shipId] = true
          bulletDest = ship.shoot(board, playerLeftShips, playerRightShips, changes)
          changes.shots.push({'ship': ship , 'finalDest' : bulletDest})
-         console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
          console.log(changes)
        }
      }
@@ -284,10 +275,7 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
                   shipHasExecutedOrder[shipId] = true
 		  var hasMoved = ship.move(dist);
                   if (hasMoved){
-                    console.log("CHANGES PUSHED~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
                     changes.moves.push({'ship' : ship , 'distance': dist})
-                    console.log(changes)
-                    console.log(ship)
                   }
                   var newXPos = ship.position.x
                   var newYPos = ship.position.y
@@ -366,61 +354,6 @@ var executeMovement = function (leftOrders, rightOrders, allDest, allShipStartPo
 	console.log('done moving all players');
 }
 
-/*
-
-var moveShip = function (player, shipId, distance) {
-	var playerShips = null;
-	if (player == players.playerLeft) {
-		playerShips = playerLeftShips;
-	} else {
-		playerShips = playerRightShips;
-	}
-	for (i in playerShips) {
-		var ship = playerShips[i];
-		if (ship.shipId == shipId) {
-			console.log("this is the ship");
-			ship.lastPosition = ship.position;
-			var xPos = ship.position.x;
-			var yPos = ship.position.y;
-			var distance = parseInt(distance)
-
-			if (ship.facing == "up") {
-				ship.position = {x: xPos, y: yPos + distance}
-			} else if (ship.facing == "right") {
-				ship.position = {x: xPos + distance, y: yPos}
-			} else if (ship.facing == "left") {
-				ship.position = {x: xPos - distance, y: yPos}
-			} else if (ship.facing == "down") {
-				ship.position = {x: xPos, y: yPos - distance}
-			} else {
-				console.log("wat");
-			}
-
-			var oldPos = ship.lastPosition;
-			var oldX = oldPos.x;
-			var oldY = oldPos.y;
-			var newPos = ship.position;
-			var newX = newPos.x;
-			var newY = newPos.y;
-
-			if (newX < 0 || newX > maxX || newY < 0 || newY > maxY) {
-				ship.position = ship.lastPosition
-				newX = ship.position.x;
-				newY = ship.position.y;
-			}
-
-			console.log("X: "+ship.position.x);
-			console.log("Y: "+ship.position.y);
-
-			board[oldX][oldY] = createSpace(oldX,oldY);
-			board[newX][newY] = createShip(shipId,newX,newY,ship.facing);
-
-		} else {
-			console.log("not the ship");
-		}
-	}
-}
-*/
 
 var createShip = function (id, x, y, facing) {
 	var ret = {
