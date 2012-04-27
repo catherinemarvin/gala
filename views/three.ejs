@@ -3,12 +3,13 @@
 		<meta charset='utf-8'>
 		<meta name="description" content="Gala: Learn how to program by commanding a robot army in space!">
 		<meta name="author" content="Kevin Hwang & Ajay Tripathy">
-		<title>SO CINEMATIC</title>
+		<title>Cinematic</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script src="/static/FastBlur.js"></script>
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
 		<link href="/static/three.css" rel="stylesheet">
+		<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 		<script src="/nowjs/now.js"></script>
 		<!--HTML5 shim, for IE6-8 support of HTML5 elements. Does it actually work? No clue, but here's to hoping it does!-->
 
@@ -538,28 +539,31 @@
 		</div>
 		<div id="content">
 			<div class="hero">
-				<h1>ThreeJS--3x as GOOD</h1>
+				<h1>Cinematic View</h1>
+				<br>
+				<p>Watch the battle in splendid 3D! Zoom around the battlefield and enjoy the carnage.</p>
+
+
 			</div>
 			<div class="container">
 
+				
 
 				<div class="row">
-					<div class="span12">
-						<p>Do a loop: ask for the board state and then display it.</p>
-						<button onclick="enableTracking()">TRACKING: ON!!!</button>
-						<button onclick="blurCanvas()">BLURRRRR</button>
-						<!--
-						<button onclick="testRotate()">TEST ROTATE!!!</button>
-						<button onclick="testTranslate()">TEST TRANSLATE!!!</button>
-						<button onclick="testShooting()">TEST SHOOTING!!!</button>
-						<button onclick="clearBullets()">CLEAR BULLETS!!!</button>
-					-->
+					<div class="span6" id="gameBoardDiv">
 					</div>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="span12" id="gameBoardDiv">
+					<div class="span6">
+						<h2>Controls</h2>
+						<p>w|a: Move Forward/Backward
+							<br>s|d: Strafe Left/Right
+							<br>o|p: Move Up/Down
+							<br>[|]: Look Down/Up
+							<br>;|': Look Left/Right
+							<br>.|/: Tilt camera Left/Right
+						</p>
+						<hr>
+						<p>
+							<button class="btn btn-primary" onclick="enableTracking()">Track a ship</button>
 					</div>
 				</div>
 

@@ -8,6 +8,7 @@
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
 		<link href="/static/index.css" rel="stylesheet">
+		<link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
 
 		<!--HTML5 shim, for IE6-8 support of HTML5 elements. Does it actually work? No clue, but here's to hoping it does!-->
 
@@ -18,7 +19,17 @@
 		<script>
 			$(document).ready(function () {
 				console.log("ready and waiting");
+
+				$("#tacticalButton").click(function () {
+					window.location = "/raphael";
+				});
+
+				$("#cinematicButton").click(function () {
+					window.location = "/three";
+				});
+
 			});
+
 		</script>
 	</head>
 
@@ -39,7 +50,11 @@
 
 				<div class="row">
 					<div class="span12">
-						<p>Information goes here, one day.</p>
+						<h3>Welcome, Commander!</h3>
+						<br>
+						<p>We're still setting your command station up, so excuse how bare everything is. In the meantime though, please take a look around!</p>
+						<p><button class="btn" id="tacticalButton">Tactical View</button></p>
+						<p><button class="btn btn-inverse" id="cinematicButton">Cinematic View</button></p>
 					</div>
 				</div>
 
