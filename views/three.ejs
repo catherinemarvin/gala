@@ -5,6 +5,7 @@
 		<meta name="author" content="Kevin Hwang & Ajay Tripathy">
 		<title>SO CINEMATIC</title>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="/static/FastBlur.js"></script>
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap.css" rel="stylesheet">
 		<link href="http://twitter.github.com/bootstrap/assets/css/bootstrap-responsive.css" rel="stylesheet">
 		<link href="/static/three.css" rel="stylesheet">
@@ -20,6 +21,7 @@
 
 		var tracking = false;
 		var trackedShipId = null;
+		var isTurning = false;
 
 
 		var camera, scene, renderer, geometry, material, mesh;
@@ -108,9 +110,9 @@
 			var meshArgs = null;
 
 			if (playerId === "playerLeft") {
-				meshArgs = {color: 0xff0000, wireframe: true};
+				meshArgs = {color: 0xff0000, wireframe: false};
 			} else {
-				meshArgs = {color: 0x0000ff, wireframe: true};
+				meshArgs = {color: 0x0000ff, wireframe: false};
 			}
 
 			var material = new THREE.MeshBasicMaterial(meshArgs);
@@ -206,6 +208,7 @@
 		        renderer = new THREE.CanvasRenderer();
 		        renderer.setClearColorHex(0x000000);
 		        renderer.setSize( 500, 500 );
+		        renderer.domElement.id = "gameBoardCanvas"
 
 		        document.getElementById("gameBoardDiv").appendChild( renderer.domElement );
 		        animate();
@@ -213,7 +216,7 @@
     	}
 
     	var updateBoard = function (data) {
-			clearBullets()
+			clearBullets();
 			var newBoard = data.board;
 			var turns = data.turns;
 			var moves = data.moves;
@@ -222,7 +225,7 @@
 			var secondDestroyed = data.destroyed.filter(function (n) {return n.manner=="shots"});
 
 			//verifyBoard(newBoard);
-			displayTurnsAndMoves(turns,moves)
+			displayTurnsAndMoves(turns,moves);
 			displayDestruction(firstDestroyed);
 			displayShots(shots);
 			displayDestruction(secondDestroyed);
@@ -267,9 +270,9 @@
 						var arg = {
 							facing: ship.facing,
 							position: shipToThree[shipId].position,
-							rotation: shipToThree[shipId].rotation
+							rotation: shipToThree[shipId].rotation,
+							turning: true
 						}
-
 						adjustCameraToShip(arg)
 					}
 				}
@@ -293,7 +296,8 @@
 						var arg = {
 							facing: ship.facing,
 							position: shipToThree[shipId].position,
-							rotation: shipToThree[shipId].rotation
+							rotation: shipToThree[shipId].rotation,
+							turning: false
 						}
 
 						adjustCameraToShip(arg)
@@ -453,7 +457,7 @@
 		}
 		*/
 		var adjustCameraToShip = function (json) {
-			console.log("adjusting")
+
 			
 			var facing = json.facing;
 			var position = json.position;
@@ -465,15 +469,15 @@
 			var yRot = rotation.y;
 			var zRot = rotation.z;
 
+			isTurning = json.turning;
+
 			camera.rotation.x = rotation.x;
 			camera.rotation.z = rotation.z;
 			camera.rotation.y = rotation.y - Math.PI / 2;
 
 			camera.position.x = position.x;
-			camera.position.y = position.y+50;
+			camera.position.y = position.y+75;
 			camera.position.z = position.z;
-
-			console.log(facing)
 
 			if (facing === "up") {
 				//camera.translateZ(100);
@@ -493,6 +497,9 @@
 
 			//camera.lookAt(position)
 
+
+			//setTimeout("requestAnimationFrame(animate)",100)
+
 			requestAnimationFrame(animate)
 		}
 
@@ -506,6 +513,17 @@
 			//mesh.rotation.x += 0.01;
 			//mesh.rotation.y += 0.02;
 			renderer.render(scene, camera);
+			/*
+			if (isTurning) {
+				blurCanvas();
+				//isTurning = false;
+			}
+			*/
+		}
+
+		var blurCanvas = function () {
+			boxBlurCanvasRGB("gameBoardCanvas",0,0,500,350,1)
+			//boxBlurCanvasRGB("gameBoardCanvas",0,350,100,100,2)
 		}
 		</script>
 	</head>
@@ -529,6 +547,7 @@
 					<div class="span12">
 						<p>Do a loop: ask for the board state and then display it.</p>
 						<button onclick="enableTracking()">TRACKING: ON!!!</button>
+						<button onclick="blurCanvas()">BLURRRRR</button>
 						<!--
 						<button onclick="testRotate()">TEST ROTATE!!!</button>
 						<button onclick="testTranslate()">TEST TRANSLATE!!!</button>
