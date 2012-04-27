@@ -6,6 +6,8 @@ var Closure = function(body, args, env){
 var serverUrl = "/start"
 var updateUrl = "/order"
 
+var gameState = {}
+
 var Exec = function(stmts){
   var info = {}
   console.log("Here's jQuery")
@@ -52,21 +54,17 @@ var Exec = function(stmts){
       console.log('shooting')
     }
     if (e === 'executeOrders' || e[0] === 'executeOrders'){
-      var gameState = {}
       var orderString = JSON.stringify(ordersToPost['orders'])
       jQuery.ajax({
          type: "POST",
          url: updateUrl,
          data: {id : ordersToPost['id'], orders: orderString},
          success: function(result) {
-                     console.log('got response from server')
                      gameState = result
                   },
-         async:   false
       });
-      console.log('order sent, updating gameState')
       ordersToPost['orders'] = []
-      return gameState
+      return true
     }
     if (e[0] === 'int-lit'){
       return e[1]
