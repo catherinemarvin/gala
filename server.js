@@ -92,13 +92,10 @@ server.post('/order', function (req, res) {
       
 	if (player === players.playerLeft && leftOrderQueue.length == 0) {
 		leftOrderQueue.push(orders);
-		//res.send('ok');
-
+                console.log("order pushed")
 	} else if (player === players.playerRight && rightOrderQueue.length == 0) {
 		rightOrderQueue.push(orders)
-		//res.send('ok');
 	} else {
-		//res.send('not ok');
 	}
 	responseStreams[player] = res;
 

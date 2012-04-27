@@ -68,7 +68,6 @@ Ship.prototype.turn = function (direction) {
         }
 }
 Ship.prototype.move = function (distance) {
-	console.log("moving ship")
         var maxX = this.maxX
         var maxY = this.maxY
         var hasMoved = true
@@ -102,15 +101,12 @@ Ship.prototype.move = function (distance) {
                                 hasMoved = false
 			}
 
-	console.log("X: "+this.position.x);
-	console.log("Y: "+this.position.y);
 	return hasMoved
 }
 
 Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips, damage){
   this.health = this.health - damage
   if (this.health <= 0){
-    console.log('~~~~~~~~~~~~~~~~~~~~~DESTROYING~~~~~~~~~~~~~~~~~~~~~~')
     this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
   }
 }

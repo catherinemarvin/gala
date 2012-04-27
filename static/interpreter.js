@@ -42,16 +42,17 @@ var Exec = function(stmts){
       return null
     }
     if (e[0] === 'exp'){
+      console.log(e)
       return evalExp(e[1], env)
     }
     if (e[0] === 'move'){
-      ordersToPost['orders'].push({ 'shipName': e[1], 'action': 'move' , 'actArgs': {'distance': e[2] }})
+      ordersToPost['orders'].push({ 'shipName': evalExp(e[1], env), 'action': 'move' , 'actArgs': {'distance': evalExp(e[2], env) }})
     }
     if (e[0] === 'turn'){
-      console.log('turning')
+      ordersToPost['orders'].push({ 'shipName': evalExp(e[1], env), 'action': 'turn' , 'actArgs': {'direction': evalExp(e[2], env) }})
     }
     if (e[0] === 'shoot'){
-      console.log('shooting')
+      ordersToPost['orders'].push({ 'shipName': evalExp(e[1], env), 'action': 'shoot' , 'actArgs': { }})
     }
     if (e === 'executeOrders' || e[0] === 'executeOrders'){
       var orderString = JSON.stringify(ordersToPost['orders'])
@@ -62,6 +63,7 @@ var Exec = function(stmts){
          success: function(result) {
                      gameState = result
                   },
+        async: false
       });
       ordersToPost['orders'] = []
       return true
