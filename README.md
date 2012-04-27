@@ -4,15 +4,22 @@
 
 ##What is it?
 
-Other than a type of apple, Gala is a way to learn programming while having fun.
+Other than a type of apple, Gala is a way to learn programming while having fun. Pit your army of robotic spaceships against another.
 
 ##What are the requirements?
 
-We'll figure it out, but for now here's the versions we're running
+We'll figure it out, but for now here are the versions of all the software we're running:
 
 nodejs v0.6.1
 
-nodejs modules: 
+npm modules: 
+
 	express 0.7.1
+
 	now 0.8.1
+
 	ejs 0.7.1
+
+A simple one-line installation of the npm modules:
+
+`npm install express@0.7.1 now@0.8.1 ejs@0.7.1`
