@@ -36,6 +36,10 @@ server.get('/three', function (req, res) {
 	res.render('three');
 });
 
+server.get('/skybox', function (req, res) {
+	res.render('skybox');
+});
+
 server.post('/test', function (req, res) {
 	res.send(req.body);
 });
