@@ -1,8 +1,8 @@
 var express = require('express');
 var nowjs = require('now');
 var logic = require('./gameLogic');
-//var scenario = require('./scenarios/classicTest')
-var scenario = require('./scenarios/aiTest')
+var scenario = require('./scenarios/classicTest')
+//var scenario = require('./scenarios/aiTest')
 
 var server = express.createServer();
 
