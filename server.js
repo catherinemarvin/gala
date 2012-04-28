@@ -1,7 +1,8 @@
 var express = require('express');
 var nowjs = require('now');
 var logic = require('./gameLogic');
-var scenario = require('./scenarios/classicTest')
+//var scenario = require('./scenarios/classicTest')
+var scenario = require('./scenarios/aiTest')
 
 var server = express.createServer();
 
@@ -80,9 +81,13 @@ server.post('/start', function (req, res) {
 	} else {
 		console.log("??????????");
 	}
+        console.log(players.playerRight)
+        if (players.playerRight === 'AI'){
+           console.log("player is AI") 
+           t = setTimeout(update, 2000)
+        }
 
 });
-
 
 
 server.post('/order', function (req, res) {
@@ -97,8 +102,14 @@ server.post('/order', function (req, res) {
 		rightOrderQueue.push(orders)
 	} else {
 	}
+        
 	responseStreams[player] = res;
 
+        if (players.playerRight === 'AI'){
+          console.log("AI Order") 
+          AI.updateOrders(board)
+          rightOrderQueue.push(AI.orders)
+        }
 	//update()
 	//update(player,res)
 	
@@ -164,7 +175,8 @@ everyone.now.pushChanges = function () {
 }
 
 var executeOrders = function (leftOrders, rightOrders) {
-	console.log(leftOrders);
+	console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!executing orders!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        console.log(leftOrders);
 	console.log(rightOrders);
         var destroyedShips = [] 
         if ( leftOrders == undefined){
@@ -203,7 +215,6 @@ var executeOrders = function (leftOrders, rightOrders) {
         var rightShoot = rightOrders.orders.filter(function (n) {return n.action == 'shoot'})
         
         executeShooting(leftShoot, rightShoot, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips)
-	//executeFiring(leftOrders, rightOrders) <- will be done after moves works...
 }
 
 var executeTurn = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder){
@@ -395,42 +406,15 @@ var players = {
 
 var leftOrderQueue = [];
 var rightOrderQueue = [];
-
+var AI = null
 var initialize = function () {
-        /*
-	board = new Array(maxX+1);
-
-	for (var i = 0; i <= maxX; i++) {
-		board[i] = new Array(maxX+1);
-	}
-
-	for (var i = 0; i <= maxX; i++) {
-		for (var j = 0; j <= maxY; j++) {
-			board[i][j] = new logic.Space(i,j);
-		}
-	}
-
-	var leftShip1 = new logic.Ship(0,0,0, 'right', 'playerLeft', "playerLeftShips");
-	var leftShip2 = new logic.Ship(1,1,0, 'left', 'playerLeft', "playerLeftShips");
-
-	//actually JSON with IDs.
-	playerLeftShips = {0: leftShip1, 1: leftShip2};
-
-	var rightShip1 = new logic.Ship(2,9,9, 'left', 'playerRight', "playerRightShips");
-	var rightShip2 = new logic.Ship(3,9,8, 'left', 'playerRight', "playerRightShips");
-
-	playerRightShips = {2: rightShip1, 3: rightShip2};
-
-	board[0][0] = leftShip1;
-	board[1][0] = leftShip2;
-
-	board[9][9] = rightShip1;
-	board[9][8] = rightShip2;
-        */
-        
-        //console.log(scenario)
-        //console.log(scenario.Scenario)
         var scene = new scenario.Scenario()
+        if (scene.isSinglePlayer){
+          console.log("scene is single player")
+          players.playerRight = 'AI'
+          console.log(players.playerRight)
+          AI = scene.AI
+        }
         maxX = scene.maxX
         maxY = scene.maxY
         board = scene.board
