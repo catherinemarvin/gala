@@ -126,6 +126,10 @@
 				mesh.scale.x = mesh.scale.y = mesh.scale.z = 10;
 				scene.add(mesh);
 				shipToThree[boardObj.shipId] = mesh
+
+				//adding my own custom facing to the THREEJS mesh object
+				
+
 				var heading = boardObj.facing;
 				if (heading == "up") {
     				mesh.rotation.y = Math.PI * 1/2;
@@ -141,6 +145,7 @@
 
     			}
 
+    			mesh.facing = boardObj.facing;
 
 				//remove this later and just cycle eventually. it makes everything very slow D:
 				requestAnimationFrame(animate);
@@ -327,6 +332,7 @@
 				//var degree = dirToDeg[facing] - dirToDeg[oldFacing]
 				var degree = relRot[facing]
 				shipToThree[shipId].rotation.y += degree * Math.PI / 180;
+				shipToThree[shipId].facing = ship.facing;
 				//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
 				//paper.getById(shipRaphaelHash[shipId]).transform("...r"+degree)
 				if (tracking === true) {
@@ -340,7 +346,7 @@
 						}
 						*/
 						var arg = {
-							facing: ship.facing,
+							facing: shipToThree[shipId].facing,
 							position: shipToThree[shipId].position,
 							rotation: shipToThree[shipId].rotation,
 							turning: true
@@ -366,7 +372,7 @@
 						}
 						*/
 						var arg = {
-							facing: ship.facing,
+							facing: shipToThree[shipId].facing,
 							position: shipToThree[shipId].position,
 							rotation: shipToThree[shipId].rotation,
 							turning: false
@@ -459,8 +465,25 @@
 				//var shipId = ship.shipId;
 				var shipId = destroyed[i].shipId
 				//paper.getById(shipRaphaelHash[shipId]).remove();
+
+				//var shipObjs = [];
+				//var tracking = false;
+				//var trackedShipId = null;
+				//var isTurning = false;
+				for (i in shipObjs) {
+					var sId = shipObjs[i].shipId;
+					if (sId === shipId) {
+						shipObjs.splice(i,1);
+						if (sId === trackedShipId) {
+							stopTracking();
+							trackedShipId = null;
+						}
+					}
+				}
 				scene.remove(shipToThree[shipId])
 			}
+
+
 			requestAnimationFrame(animate)
 		}
 
@@ -509,7 +532,7 @@
 			var shipY = shipPos.y;
 			var shipZ = shipPos.z;
 
-			var facing = shipObjs[0].facing
+			var facing = ship.facing;
 			//var facing = board[shipX/50][shipZ/50].facing;
 			tracking = true;
 			
@@ -559,7 +582,7 @@
 			var shipInThree = shipToThree[newShipObj.shipId]
 
 			var arg = {
-				facing: newShipObj.facing,
+				facing: shipInThree.facing,
 				position: shipInThree.position,
 				rotation: shipInThree.rotation
 			}
@@ -613,7 +636,7 @@
 				console.log("hue");
 			}
 
-			//camera.lookAt(position)
+			camera.lookAt(position)
 
 
 			//setTimeout("requestAnimationFrame(animate)",100)
