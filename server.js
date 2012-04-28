@@ -224,6 +224,15 @@ var executeOrders = function (leftOrders, rightOrders) {
         var rightShoot = rightOrders.orders.filter(function (n) {return n.action == 'shoot'})
         
         executeShooting(leftShoot, rightShoot, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips)
+        for (i in changes.destroyed){
+          ship = changes.destroyed[i]
+          console.log("to be destroyed")
+          console.log(ship.shipId)
+          try{
+            ship.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
+          }
+          catch (e) {} 
+        }
 }
 
 var executeTurn = function (leftOrders, rightOrders, allDest, allShipStartPos, shipHasExecutedOrder){

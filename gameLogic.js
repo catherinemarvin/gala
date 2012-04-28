@@ -109,7 +109,8 @@ Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShip
   console.log(this.shipId)
   this.health = this.health - damage
   if (this.health <= 0){
-    this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
+    destroyedShips.destroyed.push({'shipId': this.shipId, 'manner': 'shots'})
+    //this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
   }
 }
 
@@ -235,9 +236,9 @@ Ship.prototype.destroy = function (gameBoard, playerLeftShips, playerRightShips,
         else if(this.fleet === 'playerRightShips'){
            delete playerRightShips[this.shipId]
         }
-      
-        changes.destroyed.push({'shipId': this.shipId, 'manner': manner})
-        
+        if ('manner' === 'crashed'){ 
+          changes.destroyed.push({'shipId': this.shipId, 'manner': manner})
+        }
         gameBoard[this.position.x][this.position.y] = new Space(this.position.x,this.position.y); 
 }
 
