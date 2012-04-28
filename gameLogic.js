@@ -239,7 +239,9 @@ Ship.prototype.destroy = function (gameBoard, playerLeftShips, playerRightShips,
         if ('manner' === 'crashed'){ 
           changes.destroyed.push({'shipId': this.shipId, 'manner': manner})
         }
-        gameBoard[this.position.x][this.position.y] = new Space(this.position.x,this.position.y); 
+        gameBoard[this.position.x][this.position.y] = new Space(this.position.x,this.position.y);
+     
+        console.log("done destroying") 
 }
 
 

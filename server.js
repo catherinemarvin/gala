@@ -225,13 +225,18 @@ var executeOrders = function (leftOrders, rightOrders) {
         
         executeShooting(leftShoot, rightShoot, allDest, allShipStartPos, shipHasExecutedOrder, destroyedShips)
         for (i in changes.destroyed){
-          ship = changes.destroyed[i]
-          console.log("to be destroyed")
-          console.log(ship.shipId)
-          try{
-            ship.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
+          var shipId = changes.destroyed[i].shipId
+          var ship = null
+          if (! (playerLeftShips[shipId] == undefined)){
+             ship = playerLeftShips[shipId]
           }
-          catch (e) {} 
+          else if ( ! (playerRightShips[shipId] == undefined)){
+             ship = playerRightShips[shipId]
+          }
+          console.log(ship)
+          if ( ! (ship === null)){
+            ship.destroy(board, playerLeftShips, playerRightShips, destroyedShips, 'shots')
+          }
         }
 }
 
