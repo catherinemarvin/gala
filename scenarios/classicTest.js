@@ -4,7 +4,7 @@ var Scenario = function () {
   this.maxX = 9
   this.maxY = 9
   this.board = new Array(this.maxX+1);
-
+  this.isSinglePlayer = false
   for (var i = 0; i <= this.maxX; i++) {
       this.board[i] = new Array(this.maxX+1);
   }
