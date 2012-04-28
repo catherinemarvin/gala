@@ -162,11 +162,46 @@
 
 		        //sprinkle stage with stars
 
+		        var urls = [
+		        	'static/pos-x.png',
+		        	'static/neg-x.png',
+		        	'static/pos-y.png',
+		        	'static/neg-y.png',
+		        	'static/pos-z.png',
+		        	'static/neg-z.png'
+		        ];
+
+		        var textureCube = THREE.ImageUtils.loadTextureCube(urls);
+		        textureCube.format = THREE.RGBFormat;
+		        //textureCube = new THREE.Texture(textureCube.image, new THREE.CubeRefractionMapping());
+
+		        var shader = THREE.ShaderUtils.lib["cube"];
+		        shader.uniforms["tCube"].texture = textureCube;
+		        //shader.uniforms['tCube'].texture = cubemap;
+
+		        var material = new THREE.ShaderMaterial({
+		        	fragmentShader : shader.fragmentShader,
+		        	vertexShader: shader.vertexShader,
+		        	uniforms: shader.uniforms,
+		        	depthWrite: false
+		        });
+
+		        var material = new THREE.MeshBasicMaterial({color: 0x000000});
+
+		        skyboxMesh = new THREE.Mesh(new THREE.CubeGeometry(1000,1000,1000,5,5,5), material);
+		        //skyboxMesh.doubleSided = true;
+		        skyboxMesh.flipSided = true;
+
+		        scene.add(skyboxMesh);
+
+		        //var regularMesh = new THREE.Mesh(new THREE.CubeGeometry(100,100,100), new THREE.MeshBasicMaterial({color: 0x000000}));
+		        //regularMesh.doubleSided = true;
+		        //scene.add(regularMesh)
+
+		        /*
 		       for (var i = 0; i < 1; i++) {
 		       		
 			       	//var texture = THREE.ImageUtils.loadTexture('static/earth.jpg');
-
-
 			        var starMaterial = new THREE.MeshBasicMaterial({
 			        	map: texture,
 			        	//color: 0xFFFFFF
@@ -185,8 +220,8 @@
 		       		
 		       		scene.add(star)
 		       		requestAnimationFrame(animate)
-
 		       }
+		       */
 
 
 
@@ -240,7 +275,7 @@
 		        }
 
 		        renderer = new THREE.CanvasRenderer();
-		        renderer.setClearColorHex(0x000000);
+		        //renderer.setClearColorHex(0x000000);
 		        renderer.setSize( 700, 700 );
 		        renderer.domElement.id = "gameBoardCanvas"
 
