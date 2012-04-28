@@ -52,7 +52,9 @@
 
 				$("#submitOrders").click(function () {
 					var orders = $("#ordersForm").val();
-					$.getJSON("http://www.writebetterwith.us:8080?jsoncallback=?",
+					//$.getJSON("http://www.writebetterwith.us:8080?jsoncallback=?",
+					$.getJSON("http://localhost:8080?jsoncallback=?",
+
                                           {  
                                             code: orders
                                           },
