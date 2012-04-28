@@ -162,6 +162,8 @@
 
 		        //sprinkle stage with stars
 
+		        /*
+
 		        var urls = [
 		        	'static/pos-x.png',
 		        	'static/neg-x.png',
@@ -188,11 +190,12 @@
 
 		        var material = new THREE.MeshBasicMaterial({color: 0x000000});
 
-		        skyboxMesh = new THREE.Mesh(new THREE.CubeGeometry(1000,1000,1000,5,5,5), material);
+		        //skyboxMesh = new THREE.Mesh(new THREE.CubeGeometry(3000,3000,3000,2,2,2), material);
 		        //skyboxMesh.doubleSided = true;
-		        skyboxMesh.flipSided = true;
+		        //skyboxMesh.flipSided = true;
 
-		        scene.add(skyboxMesh);
+		        //scene.add(skyboxMesh);
+		        */
 
 		        //var regularMesh = new THREE.Mesh(new THREE.CubeGeometry(100,100,100), new THREE.MeshBasicMaterial({color: 0x000000}));
 		        //regularMesh.doubleSided = true;
@@ -275,7 +278,7 @@
 		        }
 
 		        renderer = new THREE.CanvasRenderer();
-		        //renderer.setClearColorHex(0x000000);
+		        renderer.setClearColorHex(0x000000);
 		        renderer.setSize( 700, 700 );
 		        renderer.domElement.id = "gameBoardCanvas"
 
