@@ -236,7 +236,7 @@ var Exec = function(stmts){
       i = i+1
     }
     if (closure.recurse === true){
-       setTimeout( function () {doCall(closure, env, varList)} , 750)
+       setTimeout( function () {doCall(closure, env, varList)} , 1000)
     }
     return evalStmt(closure.body, frame)
   }

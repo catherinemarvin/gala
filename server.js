@@ -15,7 +15,8 @@ if (process.argv[2] === "sp") {
 	console.log("multi-player mode")
 }
 
-var everyone = nowjs.initialize(server, {socketio: {"log level": process.argv[2]}});
+//var everyone = nowjs.initialize(server, {socketio: {"log level": process.argv[2]}});
+var everyone = nowjs.initialize(server);
 
 server.set('view options', {
 	layout: false

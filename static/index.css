@@ -24,3 +24,9 @@ a.brand:visited {
 	background-color: #FFFFFF;
 	background-image: none;
 }
+
+#ordersForm {
+	font-size: 40px;
+	line-height: 40px;
+	width: 100%;
+}
