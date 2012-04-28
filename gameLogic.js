@@ -105,6 +105,8 @@ Ship.prototype.move = function (distance) {
 }
 
 Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips, damage){
+  console.log("TAKING DAMAGE")
+  console.log(this.shipId)
   this.health = this.health - damage
   if (this.health <= 0){
     this.destroy(gameBoard, playerLeftShips, playerRightShips, destroyedShips, 'shots')
@@ -112,16 +114,24 @@ Ship.prototype.takeDamage = function(gameBoard, playerLeftShips, playerRightShip
 }
 
 Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, destroyedShips){
+  console.log(this.shipId + " " + this.position.x + " " + this.position.y)
   var maxX = this.maxX
   var maxY = this.maxY
   var xPos = this.position.x
   var yPos = this.position.y
   var bulletDest = {}
   if (this.facing == "up"){
-     for (var i = yPos - 1 ; i < this.range ; i = i - 1){
+     console.log("this ship is facing up")
+     var  i = yPos - 1
+     for (var j = 0 ; j < this.range ; j = j + 1){
+        console.log("looping once")
+        console.log(i) 
         if (i >= 0){ //grid boundaries
+           console.log(gameBoard[xPos][i])
            if (gameBoard[xPos][i] instanceof Ship){
+             console.log("FOUND A SHIP!!!!!!!!!!!!!!!!!!!!!!!!!!!")
              ship = gameBoard[xPos][i]
+             
              ship.takeDamage(gameBoard, playerLeftShips, playerRightShips, destroyedShips, this.damage)
              bulletDest.x = xPos
              bulletDest.y = i
@@ -132,7 +142,8 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
            bulletDest.x = xPos
            bulletDest.y = 0
            break
-        }      
+        }
+        i = i - 1      
      }    
      if (bulletDest.x == null){
        bulletDest.x = xPos
@@ -140,7 +151,8 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
      }
   }
   if (this.facing == "right"){
-     for (var i = xPos + 1 ; i < this.range ; i = i + 1){
+     var i = xPos + 1
+     for (var j = 0 ; j < this.range ; j = j + 1){
         if (i <= maxX ){ //grid boundaries
            if (gameBoard[i][yPos] instanceof Ship){
              ship = gameBoard[i][yPos]
@@ -155,6 +167,7 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
           bulletDest.y = yPos
           break
         }
+        i = i + 1
      }
      if (bulletDest.x == null){
        bulletDest.x = xPos + this.range
@@ -163,7 +176,8 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
      
   }
   if (this.facing == "left"){
-     for (var i = xPos - 1 ; i < this.range ; i = i - 1){
+     var i = xPos - 1 
+     for (var j = 0 ; j < this.range ; j = j + 1){
         if(i >= 0){
            if (gameBoard[i][yPos] instanceof Ship){
              ship = gameBoard[i][yPos]
@@ -177,7 +191,8 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
           bulletDest.x = 0
           bulletDest.y = yPos
           break
-        } 
+        }
+        i = i - 1 
      }
      if (bulletDest.x == null){
        bulletDest.x = xPos - this.range
@@ -185,7 +200,8 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
      }
   }
   if (this.facing == "down"){
-    for (var i = yPos+1 ; i < this.range ; i = i +1){
+    var i = yPos+1 
+    for (var j = 0 ; j < this.range ; j = j +1){
         if (i <= maxY){
           if (gameBoard[xPos][i] instanceof Ship){
              ship = gameBoard[xPos][i]
@@ -200,6 +216,7 @@ Ship.prototype.shoot = function(gameBoard, playerLeftShips, playerRightShips, de
           bulletDest.y = maxY
           break
         }
+        i = i + 1
     }
     if (bulletDest.x == null){
        bulletDest.x = xPos
