@@ -6,6 +6,15 @@ var scenario = require('./scenarios/classicTest')
 
 var server = express.createServer();
 
+console.log(process.argv)
+
+if (process.argv[2] === "sp") {
+	scenario = require("./scenarios/aiTest");
+	console.log("single-player mode");
+} else {
+	console.log("multi-player mode")
+}
+
 var everyone = nowjs.initialize(server, {socketio: {"log level": process.argv[2]}});
 
 server.set('view options', {
